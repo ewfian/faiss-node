@@ -1,0 +1,29 @@
+{
+  "name": "faiss-node",
+  "version": "1.0.0",
+  "description": "Node.js bindings for faiss",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "gypfile": true,
+  "scripts": {
+    "build": "node-gyp build",
+    "rebuild": "node-gyp rebuild"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ewfian/faiss-node.git"
+  },
+  "author": "ewfian",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ewfian/faiss-node/issues"
+  },
+  "homepage": "https://github.com/ewfian/faiss-node#readme",
+  "devDependencies": {
+    "node-gyp": "^9.3.1"
+  },
+  "dependencies": {
+    "bindings": "^1.5.0",
+    "node-addon-api": "^6.0.0"
+  }
+}
