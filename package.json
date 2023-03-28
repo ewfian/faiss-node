@@ -6,6 +6,7 @@
   "types": "lib/index.d.ts",
   "gypfile": true,
   "scripts": {
+    "prebuild": "node-gyp configure",
     "build": "node-gyp build",
     "rebuild": "node-gyp rebuild"
   },

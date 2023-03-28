@@ -2,8 +2,13 @@
     "targets": [
         {
             'target_name': "faiss",
-            'sources': [ "src/faiss.cc" ],
-            'include_dirs': ["<!(node -p \"require('node-addon-api').include_dir\")"],
+            'sources': [ 
+                "src/faiss.cc"
+            ],
+            'include_dirs': [
+                "<!(node -p \"require('node-addon-api').include_dir\")",
+                "src/faiss"
+            ],
             'cflags!': [ '-fno-exceptions' ],
             'cflags_cc!': [ '-fno-exceptions' ],
             'conditions': [
