@@ -6,9 +6,7 @@
   "types": "lib/index.d.ts",
   "gypfile": true,
   "scripts": {
-    "prebuild": "node-gyp configure",
-    "build": "node-gyp build",
-    "rebuild": "node-gyp rebuild"
+    "build": "cmake-js compile"
   },
   "repository": {
     "type": "git",
@@ -21,7 +19,7 @@
   },
   "homepage": "https://github.com/ewfian/faiss-node#readme",
   "devDependencies": {
-    "node-gyp": "^9.3.1"
+    "cmake-js": "^7.2.1"
   },
   "dependencies": {
     "bindings": "^1.5.0",

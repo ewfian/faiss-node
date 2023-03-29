@@ -1,5 +1,5 @@
 #include <napi.h>
-#include "faiss/faiss/IndexFlat.h"
+#include <faiss/IndexFlat.h>
 
 using namespace Napi;
 
