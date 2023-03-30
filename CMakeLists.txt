@@ -23,6 +23,10 @@ if (APPLE)
     endif ()
 endif ()
 
+if(WIN32)
+    set(BUILD_TESTING OFF)
+endif()
+
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 
@@ -40,9 +44,21 @@ add_subdirectory("deps/faiss")
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${CMAKE_JS_SRC})
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/node_modules/node-addon-api")
-target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB} PRIVATE faiss)
+target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB} faiss)
 
 if(MSVC AND CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
   # Generate node.lib
   execute_process(COMMAND ${CMAKE_AR} /def:${CMAKE_JS_NODELIB_DEF} /out:${CMAKE_JS_NODELIB_TARGET} ${CMAKE_STATIC_LINKER_FLAGS})
+endif()
+
+if(WIN32)
+    # Copy mkl_sequential.2.dll
+    if(DEFINED ENV{MKLROOT})
+        file(TO_CMAKE_PATH "$ENV{MKLROOT}\\redist\\intel64\\mkl_sequential.2.dll" MKL_sequential)
+        message("MKL_sequential: " ${MKL_sequential})
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${MKL_sequential}
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+    endif()
 endif()
