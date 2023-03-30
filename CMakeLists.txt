@@ -34,7 +34,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(FAISS_ENABLE_GPU OFF)
 set(FAISS_ENABLE_PYTHON OFF)
 
-add_definitions(-DNAPI_VERSION=4)
+add_definitions(-DNAPI_VERSION=6)
 
 include_directories(${CMAKE_JS_INC})
 file(GLOB SOURCE_FILES "src/*.cc" "src/*.h")

@@ -1,5 +1,6 @@
 .npmignore
 .gitignore
+.gitmodules
 .DS_Store
 .vscode/
 deps/
