@@ -8,8 +8,17 @@
   "engines": {
     "node": ">= 14.0.0"
   },
+  "binary": {
+    "napi_versions": [
+      6,
+      7,
+      8
+    ]
+  },
   "scripts": {
-    "build": "cmake-js compile"
+    "build": "cmake-js compile",
+    "prebuild-package": "prebuild --verbose --runtime napi --include-regex \"^(faiss-node\\.node)|(mkl_sequential\\.2\\.dll)|(faiss\\.lib)$\" --backend cmake-js",
+    "install": "prebuild-install --verbose || npm run build"
   },
   "repository": {
     "type": "git",
@@ -17,15 +26,32 @@
   },
   "author": "ewfian",
   "license": "ISC",
+  "keywords": [
+    "faiss",
+    "approximate",
+    "nearest",
+    "neighbor",
+    "search",
+    "face",
+    "matching",
+    "machine learning",
+    "feature",
+    "vector",
+    "indexing",
+    "similarity search",
+    "embeddings"
+  ],
   "bugs": {
     "url": "https://github.com/ewfian/faiss-node/issues"
   },
   "homepage": "https://github.com/ewfian/faiss-node#readme",
   "devDependencies": {
-    "cmake-js": "^7.2.1"
+    "cmake-js": "^7.2.1",
+    "prebuild": "^11.0.4"
   },
   "dependencies": {
     "bindings": "^1.5.0",
-    "node-addon-api": "^6.0.0"
+    "node-addon-api": "^6.0.0",
+    "prebuild-install": "^7.1.1"
   }
 }

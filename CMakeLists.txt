@@ -40,6 +40,11 @@ include_directories(${CMAKE_JS_INC})
 file(GLOB SOURCE_FILES "src/*.cc" "src/*.h")
 
 add_subdirectory("deps/faiss")
+set_target_properties(faiss PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    LIBRARY_OUTPUT_DIRECTORY $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    RUNTIME_OUTPUT_DIRECTORY $<TARGET_FILE_DIR:${PROJECT_NAME}>
+)
 
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${CMAKE_JS_SRC})
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
@@ -62,3 +67,5 @@ if(WIN32)
                 $<TARGET_FILE_DIR:${PROJECT_NAME}>)
     endif()
 endif()
+
+add_compile_definitions(NAPI_VERSION=${napi_build_version})
