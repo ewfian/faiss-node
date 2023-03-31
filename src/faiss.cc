@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <random>
 #include <faiss/IndexFlat.h>
+#include <faiss/index_io.h>
 
 using namespace Napi;
 using idx_t = faiss::Index::idx_t;
@@ -10,26 +11,38 @@ using idx_t = faiss::Index::idx_t;
 class IndexFlatL2 : public Napi::ObjectWrap<IndexFlatL2>
 {
 public:
-  idx_t dim_;
-  std::unique_ptr<faiss::IndexFlatL2> index_;
   IndexFlatL2(const Napi::CallbackInfo &info) : Napi::ObjectWrap<IndexFlatL2>(info)
   {
     Napi::Env env = info.Env();
-
-    if (info.Length() != 1)
+    if (info[0].IsExternal())
     {
-      Napi::Error::New(env, "Expected 1 arguments, but got " + std::to_string(info.Length()) + ".")
-          .ThrowAsJavaScriptException();
-      return;
+      const std::string fname = *info[0].As<Napi::External<std::string>>().Data();
+      index_ = std::unique_ptr<faiss::IndexFlatL2>(dynamic_cast<faiss::IndexFlatL2 *>(faiss::read_index(fname.c_str())));
     }
-    if (!info[0].IsNumber())
+    else
     {
-      Napi::TypeError::New(env, "Invalid the first argument type, must be a number.").ThrowAsJavaScriptException();
-      return;
-    }
+      if (!info.IsConstructCall())
+      {
+        Napi::Error::New(env, "Class constructors cannot be invoked without 'new'")
+            .ThrowAsJavaScriptException();
+        return;
+      }
 
-    dim_ = info[0].As<Napi::Number>().Uint32Value();
-    index_ = std::unique_ptr<faiss::IndexFlatL2>(new faiss::IndexFlatL2(dim_));
+      if (info.Length() != 1)
+      {
+        Napi::Error::New(env, "Expected 1 arguments, but got " + std::to_string(info.Length()) + ".")
+            .ThrowAsJavaScriptException();
+        return;
+      }
+      if (!info[0].IsNumber())
+      {
+        Napi::TypeError::New(env, "Invalid the first argument type, must be a number.").ThrowAsJavaScriptException();
+        return;
+      }
+
+      auto n = info[0].As<Napi::Number>().Uint32Value();
+      index_ = std::unique_ptr<faiss::IndexFlatL2>(new faiss::IndexFlatL2(n));
+    }
   }
 
   static Napi::Object Init(Napi::Env env, Napi::Object exports)
@@ -40,7 +53,9 @@ public:
       InstanceMethod("getDimension", &IndexFlatL2::getDimension),
       InstanceMethod("isTrained", &IndexFlatL2::isTrained),
       InstanceMethod("add", &IndexFlatL2::add),
-      InstanceMethod("search", &IndexFlatL2::search)
+      InstanceMethod("search", &IndexFlatL2::search),
+      InstanceMethod("write", &IndexFlatL2::write),
+      StaticMethod("read", &IndexFlatL2::read),
     });
     // clang-format on
 
@@ -52,11 +67,31 @@ public:
     return exports;
   }
 
-private:
-  Napi::Value isTrained(const Napi::CallbackInfo &info)
+  static Napi::Value read(const Napi::CallbackInfo &info)
   {
     Napi::Env env = info.Env();
-    return Napi::Boolean::New(env, index_->is_trained);
+
+    if (info.Length() != 1)
+    {
+      Napi::Error::New(env, "Expected 1 arguments, but got " + std::to_string(info.Length()) + ".")
+          .ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+    if (!info[0].IsString())
+    {
+      Napi::TypeError::New(env, "Invalid the first argument type, must be a string.").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+
+    Napi::FunctionReference *constructor = env.GetInstanceData<Napi::FunctionReference>();
+    return constructor->New({Napi::External<std::string>::New(env, new std::string(info[0].As<Napi::String>()))});
+  }
+
+private:
+  std::unique_ptr<faiss::IndexFlatL2> index_;
+  Napi::Value isTrained(const Napi::CallbackInfo &info)
+  {
+    return Napi::Boolean::New(info.Env(), index_->is_trained);
   }
 
   Napi::Value add(const Napi::CallbackInfo &info)
@@ -67,22 +102,22 @@ private:
     {
       Napi::Error::New(env, "Expected 1 arguments, but got " + std::to_string(info.Length()) + ".")
           .ThrowAsJavaScriptException();
-      return info.Env().Undefined();
+      return env.Undefined();
     }
     if (!info[0].IsArray())
     {
       Napi::TypeError::New(env, "Invalid the first argument type, must be a Array.").ThrowAsJavaScriptException();
-      return info.Env().Undefined();
+      return env.Undefined();
     }
 
     Napi::Array arr = info[0].As<Napi::Array>();
     size_t length = arr.Length();
-    auto dv = std::div(length, dim_);
+    auto dv = std::div(length, index_->d);
     if (dv.rem != 0)
     {
       Napi::Error::New(env, "Invalid the given array length.")
           .ThrowAsJavaScriptException();
-      return info.Env().Undefined();
+      return env.Undefined();
     }
 
     float *xb = new float[length];
@@ -91,9 +126,9 @@ private:
       Napi::Value val = arr[i];
       if (!val.IsNumber())
       {
-        Napi::Error::New(info.Env(), "Expected a Number as Array Item")
+        Napi::Error::New(env, "Expected a Number as Array Item")
             .ThrowAsJavaScriptException();
-        return info.Env().Undefined();
+        return env.Undefined();
       }
       xb[i] = val.As<Napi::Number>().FloatValue();
     }
@@ -101,7 +136,7 @@ private:
     index_->add(dv.quot, xb);
 
     delete[] xb;
-    return info.Env().Undefined();
+    return env.Undefined();
   }
 
   Napi::Value search(const Napi::CallbackInfo &info)
@@ -112,17 +147,17 @@ private:
     {
       Napi::Error::New(env, "Expected 2 arguments, but got " + std::to_string(info.Length()) + ".")
           .ThrowAsJavaScriptException();
-      return info.Env().Undefined();
+      return env.Undefined();
     }
     if (!info[0].IsArray())
     {
       Napi::TypeError::New(env, "Invalid the first argument type, must be an Array.").ThrowAsJavaScriptException();
-      return info.Env().Undefined();
+      return env.Undefined();
     }
     if (!info[1].IsNumber())
     {
       Napi::TypeError::New(env, "Invalid the second argument type, must be a number.").ThrowAsJavaScriptException();
-      return info.Env().Undefined();
+      return env.Undefined();
     }
 
     const uint32_t k = info[1].As<Napi::Number>().Uint32Value();
@@ -131,17 +166,17 @@ private:
       Napi::Error::New(env, "Invalid the number of k (cannot be given a value greater than `ntotal`: " +
                                 std::to_string(index_->ntotal) + ").")
           .ThrowAsJavaScriptException();
-      return env.Null();
+      return env.Undefined();
     }
 
     Napi::Array arr = info[0].As<Napi::Array>();
     size_t length = arr.Length();
-    auto dv = std::div(length, dim_);
+    auto dv = std::div(length, index_->d);
     if (dv.rem != 0)
     {
       Napi::Error::New(env, "Invalid the given array length.")
           .ThrowAsJavaScriptException();
-      return info.Env().Undefined();
+      return env.Undefined();
     }
 
     float *xq = new float[length];
@@ -150,9 +185,9 @@ private:
       Napi::Value val = arr[i];
       if (!val.IsNumber())
       {
-        Napi::Error::New(info.Env(), "Expected a Number as Array Item")
+        Napi::Error::New(env, "Expected a Number as Array Item")
             .ThrowAsJavaScriptException();
-        return info.Env().Undefined();
+        return env.Undefined();
       }
       xq[i] = val.As<Napi::Number>().FloatValue();
     }
@@ -183,13 +218,35 @@ private:
 
   Napi::Value ntotal(const Napi::CallbackInfo &info)
   {
-    Napi::Env env = info.Env();
-    return Napi::Number::New(env, index_->ntotal);
+    return Napi::Number::New(info.Env(), index_->ntotal);
   }
 
   Napi::Value getDimension(const Napi::CallbackInfo &info)
   {
-    return Napi::Number::New(info.Env(), dim_);
+    return Napi::Number::New(info.Env(), index_->d);
+  }
+
+  Napi::Value write(const Napi::CallbackInfo &info)
+  {
+    Napi::Env env = info.Env();
+
+    if (info.Length() != 1)
+    {
+      Napi::Error::New(env, "Expected 1 arguments, but got " + std::to_string(info.Length()) + ".")
+          .ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+    if (!info[0].IsString())
+    {
+      Napi::TypeError::New(env, "Invalid the first argument type, must be a string.").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+
+    const std::string fname = info[0].As<Napi::String>().Utf8Value();
+
+    faiss::write_index(index_.get(), fname.c_str());
+
+    return env.Undefined();
   }
 };
 

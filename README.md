@@ -30,4 +30,16 @@ console.log(index.ntotal()); // 4
 const results = index.search([1, 0], 4);
 console.log(results.labels); // [ 0, 3, 1, 2 ]
 console.log(results.distances); // [ 0, 1, 4, 9 ]
+
+// Save index
+const fname = 'faiss.index';
+index.write(fname);
+
+// Load saved index
+const index_loaded = IndexFlatL2.read(fname);
+console.log(index_loaded.getDimension()); //2
+console.log(index_loaded.ntotal()); //4
+const results1 = index_loaded.search([1, 1], 4);
+console.log(results1.labels); // [ 3, 0, 1, 2 ]
+console.log(results1.distances); // [ 0, 1, 1, 4 ]
 ```

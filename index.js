@@ -15,3 +15,13 @@ console.log(index.ntotal());
 const results = index.search([1, 0], 4);
 console.log(results.labels);
 console.log(results.distances);
+
+const fname = 'faiss.index';
+index.write(fname);
+
+const index_loaded = IndexFlatL2.read(fname);
+console.log(index_loaded.getDimension());
+console.log(index_loaded.ntotal());
+const results1 = index_loaded.search([1, 1], 4);
+console.log(results1.labels);
+console.log(results1.distances);

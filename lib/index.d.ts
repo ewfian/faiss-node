@@ -10,4 +10,6 @@ export class IndexFlatL2 {
     isTrained(): boolean;
     add(x: number[]): void;
     search(x: number[], k: number): SearchResult;
+    write(fname: string): void
+    static read(fname: string): IndexFlatL2;
 }
