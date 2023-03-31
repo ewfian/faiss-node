@@ -9,8 +9,8 @@ $ npm install faiss-node
 
 ## Usage
 
-```typescript
-import { IndexFlatL2 } from 'faiss-node';
+```javascript
+const { IndexFlatL2 } = require('faiss-node');
 
 const dimension = 2;
 const index = new IndexFlatL2(dimension);
