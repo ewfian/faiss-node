@@ -1,6 +1,6 @@
 {
   "name": "faiss-node",
-  "version": "0.1.0-alpha.0",
+  "version": "0.1.0-alpha.1",
   "description": "Node.js bindings for faiss",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
