@@ -17,7 +17,7 @@
   },
   "scripts": {
     "build": "cmake-js compile",
-    "prebuild-package": "prebuild --verbose --runtime napi --include-regex \"^(faiss-node\\.node)|(mkl_sequential\\.2\\.dll)|(faiss\\.lib)|(libfaiss\\.a)$\" --backend cmake-js",
+    "prebuild-package": "prebuild --verbose --runtime napi --include-regex \"^(faiss-node\\.node)|(mkl_sequential\\.2\\.dll)|(faiss\\.lib)|(libfaiss\\.a)|(libmkl_intel_lp64\\.so)|(libmkl_sequential\\.so)|(libmkl_core\\.so)$\" --backend cmake-js",
     "install": "prebuild-install --runtime napi --verbose || npm run build"
   },
   "repository": {
