@@ -53,6 +53,12 @@ set_target_properties(faiss PROPERTIES
 
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${CMAKE_JS_SRC})
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    # https://stackoverflow.com/questions/43330165/how-to-link-a-shared-library-with-cmake-with-relative-path/69707790#69707790
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+            BUILD_WITH_INSTALL_RPATH FALSE
+            LINK_FLAGS "-Wl,-rpath,$ORIGIN/")
+endif()
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/node_modules/node-addon-api")
 target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB} faiss)
 
@@ -70,5 +76,24 @@ if(WIN32)
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${MKL_sequential}
                 $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+    endif()
+endif()
+
+# https://gitlab.kitware.com/cmake/community/-/wikis/doc/tutorials/How-To-Write-Platform-Checks#cmake-system
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    # Copy libmkl_intel_lp64.so, libmkl_sequential.so, libmkl_core.so
+    if(DEFINED ENV{MKLROOT})
+        set(DEPENDANCES_MKL
+            libmkl_intel_lp64.so
+            libmkl_sequential.so
+            libmkl_core.so)
+        foreach(dep ${DEPENDANCES_MKL})
+        file(TO_CMAKE_PATH "$ENV{MKLROOT}/lib/intel64/${dep}" MKL_dep)
+        message("Copy DEPENDANCES_MKL: " ${MKL_dep})
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${MKL_dep}
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+        endforeach(file_i)
     endif()
 endif()
