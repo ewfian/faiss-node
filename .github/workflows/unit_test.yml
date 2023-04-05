@@ -1,0 +1,32 @@
+name: Unit Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        node: ['14', '16', '18']
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+    - name: Install awscli and awsebcli
+      run: |
+        brew update
+        brew install libomp
+        brew info libomp
+    - name: Setup node ${{ matrix.node }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node }}
+    - name: NPM Install
+      run: npm ci --ignore-scripts
+    - name: Build and test
+      run: npm run build && npm test
+        
