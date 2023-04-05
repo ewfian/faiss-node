@@ -16,9 +16,8 @@ jobs:
     - uses: actions/checkout@v3
       with:
         submodules: 'true'
-    - name: Install awscli and awsebcli
+    - name: Install libomp
       run: |
-        brew update
         brew install libomp
         brew info libomp
     - name: Setup node ${{ matrix.node }}
