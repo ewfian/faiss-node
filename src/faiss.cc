@@ -30,7 +30,7 @@ public:
 
       if (info.Length() != 1)
       {
-        Napi::Error::New(env, "Expected 1 arguments, but got " + std::to_string(info.Length()) + ".")
+        Napi::Error::New(env, "Expected 1 argument, but got " + std::to_string(info.Length()) + ".")
             .ThrowAsJavaScriptException();
         return;
       }
@@ -73,7 +73,7 @@ public:
 
     if (info.Length() != 1)
     {
-      Napi::Error::New(env, "Expected 1 arguments, but got " + std::to_string(info.Length()) + ".")
+      Napi::Error::New(env, "Expected 1 argument, but got " + std::to_string(info.Length()) + ".")
           .ThrowAsJavaScriptException();
       return env.Undefined();
     }
@@ -100,13 +100,13 @@ private:
 
     if (info.Length() != 1)
     {
-      Napi::Error::New(env, "Expected 1 arguments, but got " + std::to_string(info.Length()) + ".")
+      Napi::Error::New(env, "Expected 1 argument, but got " + std::to_string(info.Length()) + ".")
           .ThrowAsJavaScriptException();
       return env.Undefined();
     }
     if (!info[0].IsArray())
     {
-      Napi::TypeError::New(env, "Invalid the first argument type, must be a Array.").ThrowAsJavaScriptException();
+      Napi::TypeError::New(env, "Invalid the first argument type, must be an Array.").ThrowAsJavaScriptException();
       return env.Undefined();
     }
 
@@ -126,7 +126,7 @@ private:
       Napi::Value val = arr[i];
       if (!val.IsNumber())
       {
-        Napi::Error::New(env, "Expected a Number as Array Item")
+        Napi::Error::New(env, "Expected a Number as array item. (at: " + std::to_string(i) + ")")
             .ThrowAsJavaScriptException();
         return env.Undefined();
       }
@@ -156,7 +156,7 @@ private:
     }
     if (!info[1].IsNumber())
     {
-      Napi::TypeError::New(env, "Invalid the second argument type, must be a number.").ThrowAsJavaScriptException();
+      Napi::TypeError::New(env, "Invalid the second argument type, must be a Number.").ThrowAsJavaScriptException();
       return env.Undefined();
     }
 
@@ -185,7 +185,7 @@ private:
       Napi::Value val = arr[i];
       if (!val.IsNumber())
       {
-        Napi::Error::New(env, "Expected a Number as Array Item")
+        Napi::Error::New(env, "Expected a Number as array item. (at: " + std::to_string(i) + ")")
             .ThrowAsJavaScriptException();
         return env.Undefined();
       }
@@ -232,7 +232,7 @@ private:
 
     if (info.Length() != 1)
     {
-      Napi::Error::New(env, "Expected 1 arguments, but got " + std::to_string(info.Length()) + ".")
+      Napi::Error::New(env, "Expected 1 argument, but got " + std::to_string(info.Length()) + ".")
           .ThrowAsJavaScriptException();
       return env.Undefined();
     }
