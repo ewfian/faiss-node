@@ -1,5 +1,13 @@
 # faiss-node
-This package is in a very early stage of development.
+[![NPM Version](https://img.shields.io/npm/v/faiss-node?logo=npm)](https://www.npmjs.com/package/faiss-node)
+![Node Version](https://img.shields.io/node/v/faiss-node)
+[![license](https://img.shields.io/github/license/ewfian/faiss-node)](https://github.com/ewfian/faiss-node)
+
+
+faiss-node provides Node.js bindings for [faiss](https://github.com/facebookresearch/faiss)
+
+_**This package is in a very early stage of development.**_
+
 
 ## Installation
 
@@ -43,3 +51,7 @@ const results1 = index_loaded.search([1, 1], 4);
 console.log(results1.labels); // [ 3, 0, 1, 2 ]
 console.log(results1.distances); // [ 0, 1, 1, 4 ]
 ```
+
+## License
+
+MIT
