@@ -36,6 +36,8 @@ jobs:
           node-version: 18
       - name: NPM Install
         run: npm ci --ignore-scripts
+      - name: Build Docs
+        run: npm run doc
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
