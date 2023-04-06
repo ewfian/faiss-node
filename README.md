@@ -1,8 +1,9 @@
 # faiss-node
 [![NPM Version](https://img.shields.io/npm/v/faiss-node?logo=npm)](https://www.npmjs.com/package/faiss-node)
-[![Node Version](https://img.shields.io/node/v/faiss-node)](https://github.com/ewfian/faiss-node/blob/main/package.json)
+[![Node Version](https://img.shields.io/node/v/faiss-node)](https://github.com/ewfian/faiss-node)
 [![Unit Test](https://github.com/ewfian/faiss-node/actions/workflows/unit_test.yml/badge.svg)](https://github.com/ewfian/faiss-node/actions/workflows/unit_test.yml)
 [![license](https://img.shields.io/github/license/ewfian/faiss-node)](https://github.com/ewfian/faiss-node)
+[![Documentation](https://img.shields.io/badge/api-reference-blue.svg)](https://ewfian.github.io/faiss-node/)
 
 
 faiss-node provides Node.js bindings for [faiss](https://github.com/facebookresearch/faiss)
@@ -15,6 +16,10 @@ _**This package is in a very early stage of development.**_
 ```sh
 $ npm install faiss-node
 ```
+
+## Documentation
+
+* [faiss-node API Documentation](https://ewfian.github.io/faiss-node/)
 
 ## Usage
 
