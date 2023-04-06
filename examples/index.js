@@ -1,4 +1,4 @@
-const { IndexFlatL2 } = require('./lib/index');
+const { IndexFlatL2 } = require('../lib/index');
 
 const dimension = 2;
 const index = new IndexFlatL2(dimension);

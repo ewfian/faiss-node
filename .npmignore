@@ -3,6 +3,8 @@
 .gitmodules
 .DS_Store
 .vscode/
+.github/
+prebuilds/
 deps/
 node_modules/
 build/
