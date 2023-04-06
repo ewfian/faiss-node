@@ -12,7 +12,8 @@ index.add([1, 3]);
 index.add([1, 1]);
 console.log(index.ntotal());
 
-const results = index.search([1, 0], 4);
+const k = 4;
+const results = index.search([1, 0], k);
 console.log(results.labels);
 console.log(results.distances);
 

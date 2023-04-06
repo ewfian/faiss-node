@@ -9,10 +9,10 @@ export interface SearchResult {
 /**
  * IndexFlatL2 Index.
  * Index that stores the full vectors and performs exhaustive search.
- * @param {number} dimension The dimensionality of index.
+ * @param {number} d The dimensionality of index.
  */
 export class IndexFlatL2 {
-    constructor(dimension: number);
+    constructor(d: number);
     /**
      * returns the number of verctors currently indexed.
      * @return {numbers} The number of verctors currently indexed.
