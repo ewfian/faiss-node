@@ -1,5 +1,5 @@
-/build
-/node_modules
+build/
+node_modules/
 docs/
 .DS_Store
 faiss.index
