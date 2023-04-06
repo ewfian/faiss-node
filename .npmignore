@@ -4,9 +4,11 @@
 .DS_Store
 .vscode/
 .github/
+tsconfig.json
 prebuilds/
 deps/
 node_modules/
 build/
+docs/
 package-lock.json
 faiss.index
