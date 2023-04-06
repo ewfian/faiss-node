@@ -40,6 +40,7 @@ export class IndexFlatL2 {
      * query, the result array is padded with -1s.
      *
      * @param {number[]} x Input vectors to search, size n * d.
+     * @param {number} k The number of nearest neighbors to search for.
      * @return {SearchResult} Output of the search result.
      */
     search(x: number[], k: number): SearchResult;
