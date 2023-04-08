@@ -27,7 +27,7 @@
     "url": "git+https://github.com/ewfian/faiss-node.git"
   },
   "author": "ewfian",
-  "license": "ISC",
+  "license": "MIT",
   "keywords": [
     "faiss",
     "approximate",
