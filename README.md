@@ -2,7 +2,7 @@
 [![NPM Version](https://img.shields.io/npm/v/faiss-node?logo=npm)](https://www.npmjs.com/package/faiss-node)
 [![Node Version](https://img.shields.io/node/v/faiss-node)](https://github.com/ewfian/faiss-node)
 [![Unit Test](https://github.com/ewfian/faiss-node/actions/workflows/unit_test.yml/badge.svg)](https://github.com/ewfian/faiss-node/actions/workflows/unit_test.yml)
-[![license](https://img.shields.io/github/license/ewfian/faiss-node)](https://github.com/ewfian/faiss-node)
+[![License](https://img.shields.io/github/license/ewfian/faiss-node)](https://github.com/ewfian/faiss-node)
 [![Documentation](https://img.shields.io/badge/api-reference-blue.svg)](https://ewfian.github.io/faiss-node/)
 
 
