@@ -25,9 +25,9 @@ if (APPLE)
     endif ()
 endif ()
 
-if(WIN32)
-    set(BUILD_TESTING OFF)
-endif()
+# if(WIN32)
+set(BUILD_TESTING OFF)
+# endif()
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
@@ -45,6 +45,8 @@ endif()
 
 include_directories(${CMAKE_JS_INC})
 file(GLOB SOURCE_FILES "src/*.cc" "src/*.h")
+
+set(SOURCE ${SOURCE_FILES})
 
 add_subdirectory("deps/faiss")
 set_target_properties(faiss PROPERTIES
