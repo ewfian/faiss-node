@@ -6,7 +6,7 @@
 #include <faiss/index_io.h>
 
 using namespace Napi;
-using idx_t = faiss::Index::idx_t;
+using idx_t = faiss::idx_t;
 
 class IndexFlatL2 : public Napi::ObjectWrap<IndexFlatL2>
 {
