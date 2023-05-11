@@ -8,16 +8,17 @@
 using namespace Napi;
 using idx_t = faiss::idx_t;
 
-class IndexFlatL2 : public Napi::ObjectWrap<IndexFlatL2>
+template <class T, typename Index>
+class IndexFlat : public Napi::ObjectWrap<T>
 {
 public:
-  IndexFlatL2(const Napi::CallbackInfo &info) : Napi::ObjectWrap<IndexFlatL2>(info)
+  IndexFlat(const Napi::CallbackInfo &info) : Napi::ObjectWrap<T>(info)
   {
     Napi::Env env = info.Env();
     if (info[0].IsExternal())
     {
       const std::string fname = *info[0].As<Napi::External<std::string>>().Data();
-      index_ = std::unique_ptr<faiss::IndexFlatL2>(dynamic_cast<faiss::IndexFlatL2 *>(faiss::read_index(fname.c_str())));
+      index_ = std::unique_ptr<Index>(dynamic_cast<Index *>(faiss::read_index(fname.c_str())));
     }
     else
     {
@@ -41,30 +42,9 @@ public:
       }
 
       auto n = info[0].As<Napi::Number>().Uint32Value();
-      index_ = std::unique_ptr<faiss::IndexFlatL2>(new faiss::IndexFlatL2(n));
+
+      index_ = std::unique_ptr<Index>(new Index(n));
     }
-  }
-
-  static Napi::Object Init(Napi::Env env, Napi::Object exports)
-  {
-    // clang-format off
-    Napi::Function func = DefineClass(env, "IndexFlatL2", {
-      InstanceMethod("ntotal", &IndexFlatL2::ntotal),
-      InstanceMethod("getDimension", &IndexFlatL2::getDimension),
-      InstanceMethod("isTrained", &IndexFlatL2::isTrained),
-      InstanceMethod("add", &IndexFlatL2::add),
-      InstanceMethod("search", &IndexFlatL2::search),
-      InstanceMethod("write", &IndexFlatL2::write),
-      StaticMethod("read", &IndexFlatL2::read),
-    });
-    // clang-format on
-
-    Napi::FunctionReference *constructor = new Napi::FunctionReference();
-    *constructor = Napi::Persistent(func);
-    env.SetInstanceData(constructor);
-
-    exports.Set("IndexFlatL2", func);
-    return exports;
   }
 
   static Napi::Value read(const Napi::CallbackInfo &info)
@@ -83,12 +63,12 @@ public:
       return env.Undefined();
     }
 
-    Napi::FunctionReference *constructor = env.GetInstanceData<Napi::FunctionReference>();
     return constructor->New({Napi::External<std::string>::New(env, new std::string(info[0].As<Napi::String>()))});
   }
 
-private:
-  std::unique_ptr<faiss::IndexFlatL2> index_;
+protected:
+  std::unique_ptr<Index> index_;
+  inline static Napi::FunctionReference *constructor = new Napi::FunctionReference();
   Napi::Value isTrained(const Napi::CallbackInfo &info)
   {
     return Napi::Boolean::New(info.Env(), index_->is_trained);
@@ -250,9 +230,60 @@ private:
   }
 };
 
+class IndexFlatL2 : public IndexFlat<IndexFlatL2, faiss::IndexFlatL2>
+{
+public:
+  using IndexFlat::IndexFlat;
+  static Napi::Object Init(Napi::Env env, Napi::Object exports)
+  {
+    // clang-format off
+    Napi::Function func = DefineClass(env, "IndexFlatL2", {
+      InstanceMethod("ntotal", &IndexFlatL2::ntotal),
+      InstanceMethod("getDimension", &IndexFlatL2::getDimension),
+      InstanceMethod("isTrained", &IndexFlatL2::isTrained),
+      InstanceMethod("add", &IndexFlatL2::add),
+      InstanceMethod("search", &IndexFlatL2::search),
+      InstanceMethod("write", &IndexFlatL2::write),
+      StaticMethod("read", &IndexFlatL2::read),
+    });
+    // clang-format on
+
+    *constructor = Napi::Persistent(func);
+
+    exports.Set("IndexFlatL2", func);
+    return exports;
+  }
+};
+
+class IndexFlatIP : public IndexFlat<IndexFlatIP, faiss::IndexFlatIP>
+{
+public:
+  using IndexFlat::IndexFlat;
+  static Napi::Object Init(Napi::Env env, Napi::Object exports)
+  {
+    // clang-format off
+    Napi::Function func = DefineClass(env, "IndexFlatIP", {
+      InstanceMethod("ntotal", &IndexFlatIP::ntotal),
+      InstanceMethod("getDimension", &IndexFlatIP::getDimension),
+      InstanceMethod("isTrained", &IndexFlatIP::isTrained),
+      InstanceMethod("add", &IndexFlatIP::add),
+      InstanceMethod("search", &IndexFlatIP::search),
+      InstanceMethod("write", &IndexFlatIP::write),
+      StaticMethod("read", &IndexFlatIP::read),
+    });
+    // clang-format on
+
+    *constructor = Napi::Persistent(func);
+
+    exports.Set("IndexFlatIP", func);
+    return exports;
+  }
+};
+
 Napi::Object Init(Napi::Env env, Napi::Object exports)
 {
   IndexFlatL2::Init(env, exports);
+  IndexFlatIP::Init(env, exports);
   return exports;
 }
 
