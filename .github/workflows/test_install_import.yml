@@ -28,4 +28,11 @@ jobs:
     - name: Test
       working-directory: ./test-import
       run: npm test
+    - name: Install libomp
+      if: matrix.os == 'macos-latest'
+      run: brew install libomp
+    - name: Run Test Again
+      if: matrix.os == 'macos-latest'
+      working-directory: ./test-import
+      run: npm test
         
