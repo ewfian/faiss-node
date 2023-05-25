@@ -24,9 +24,11 @@ jobs:
         node-version: ${{ matrix.node }}
     - name: NPM Pack
       run: npm pack
+    - name: Rename Package
+      run: mv faiss-node-*.tgz faiss-node.tgz
     - name: NPM Install
       working-directory: ./test-import
-      run: npm install ../faiss-node-*.tgz
+      run: npm install ../faiss-node.tgz --verbose
     - name: Test
       working-directory: ./test-import
       run: npm test
