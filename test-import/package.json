@@ -8,8 +8,5 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "faiss-node": "*"
-  }
+  "license": "ISC"
 }

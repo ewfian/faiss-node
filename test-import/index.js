@@ -1,4 +1,4 @@
-const assert = require('node:assert/strict');
+const assert = require('assert');
 const { IndexFlatL2 } = require('../lib/index');
 
 const dimension = 4096;
