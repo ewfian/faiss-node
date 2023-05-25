@@ -22,9 +22,11 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node }}
+    - name: NPM Pack
+      run: npm pack
     - name: NPM Install
       working-directory: ./test-import
-      run: npm install faiss-node
+      run: npm install ../faiss-node-*.tgz
     - name: Test
       working-directory: ./test-import
       run: npm test
