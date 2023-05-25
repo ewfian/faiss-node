@@ -1,5 +1,5 @@
-const assert = require('node:assert/strict');
-const { IndexFlatL2 } = require('../lib/index');
+const assert = require('assert');
+const { IndexFlatL2 } = require('faiss-node');
 
 const dimension = 4096;
 const index = new IndexFlatL2(dimension);
