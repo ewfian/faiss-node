@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "faiss-node": "git+https://github.com/ewfian/faiss-node.git#main"
+    "faiss-node": "*"
   }
 }
