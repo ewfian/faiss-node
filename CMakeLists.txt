@@ -101,3 +101,28 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         endforeach(file_i)
     endif()
 endif()
+
+if(APPLE)
+    # Copy libomp.dylib
+    message("OpenMP_libomp_LIBRARY: " ${OpenMP_libomp_LIBRARY})
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${OpenMP_libomp_LIBRARY}
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+    # fix loader path
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_INSTALL_NAME_TOOL} -change ${OpenMP_libomp_LIBRARY} @rpath/libomp.dylib
+        $<TARGET_FILE:${PROJECT_NAME}>)
+    # add /opt/homebrew/opt/libomp/lib into rpath for M1/M2
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_INSTALL_NAME_TOOL} -add_rpath /opt/homebrew/opt/libomp/lib
+        $<TARGET_FILE:${PROJECT_NAME}>)
+    # add /usr/local/opt/libomp/lib into rpath for Intel
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_INSTALL_NAME_TOOL} -add_rpath /usr/local/opt/libomp/lib
+        $<TARGET_FILE:${PROJECT_NAME}>)
+    # add @loader_path into rpath as a fallback
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_INSTALL_NAME_TOOL} -add_rpath @loader_path
+        $<TARGET_FILE:${PROJECT_NAME}>)
+endif()
