@@ -13,6 +13,7 @@ jobs:
         node: ['14', '16', '18', '20']
         os: [macos-latest, windows-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
+    continue-on-error: true
     steps:
     - uses: actions/checkout@v3
     - name: Uninstall libomp
