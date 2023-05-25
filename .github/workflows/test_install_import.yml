@@ -17,7 +17,7 @@ jobs:
     - uses: actions/checkout@v3
     - name: Uninstall libomp
       if: matrix.os == 'macos-latest'
-      run: brew uninstall libomp
+      run: brew uninstall --ignore-dependencies libomp
     - name: Setup node ${{ matrix.node }}
       uses: actions/setup-node@v3
       with:
