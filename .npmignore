@@ -12,3 +12,4 @@ build/
 docs/
 package-lock.json
 faiss.index
+test-import/
