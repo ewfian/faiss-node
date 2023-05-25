@@ -19,7 +19,10 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node }}
-    - name: NPM Install & test
+    - name: NPM Install
       working-directory: ./test-import
-      run: npm ci && npm test
+      run: npm install
+    - name: Test
+      working-directory: ./test-import
+      run: npm test
         
