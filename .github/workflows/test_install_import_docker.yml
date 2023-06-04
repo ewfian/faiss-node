@@ -8,6 +8,14 @@ on:
 
 jobs:
   test:
+    strategy:
+      matrix:
+        node: ['14', '16', '18', '20']
+        distro:
+          - ''
+          - buster
+          - bullseye
+          - alpine
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -19,9 +27,9 @@ jobs:
       run: npm pack
     - name: Rename Package
       run: mv faiss-node-*.tgz test-import/faiss-node.tgz
-    - name: Build docker
+    - name: Build docker on node:${{ matrix.node }}-${{ matrix.distro }}
       working-directory: ./test-import
-      run: docker build -t test-import .
+      run: docker build -t test-import --build-arg BASE_IMAGE=node:${{ matrix.node }}-${{ matrix.distro }} .
     - name: Run test
       working-directory: ./test-import
       run: docker run test-import
