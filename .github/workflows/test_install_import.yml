@@ -7,8 +7,9 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  test:
     strategy:
+      fail-fast: false
       matrix:
         node: ['14', '16', '18', '20']
         os: [macos-latest, windows-latest, ubuntu-latest]
@@ -43,4 +44,3 @@ jobs:
       if: matrix.os == 'macos-latest'
       working-directory: ./test-import
       run: npm test
-        

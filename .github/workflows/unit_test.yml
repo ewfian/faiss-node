@@ -28,4 +28,3 @@ jobs:
       run: npm ci --ignore-scripts
     - name: Build and test
       run: npm run build && npm test
-        
