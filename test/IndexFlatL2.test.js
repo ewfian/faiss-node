@@ -18,10 +18,11 @@ describe('IndexFlatL2', () => {
 
     describe('#read', () => {
         it('throws an error if file does not existed', () => {
-            expect(() => { IndexFlatL2.read('not_existed_file') }).toThrow(/^Error.*could not open not_existed_file for reading: No such file or directory$/);
+            const fname = 'not_existed_file'
+            expect(() => { IndexFlatL2.read(fname) }).toThrow(new RegExp(`^Error.*could not open ${fname} for reading: No such file or directory$`));
         });
 
-        it('loaded saved file.', () => {
+        it('read saved file.', () => {
             const dimension = 2;
             const index = new IndexFlatL2(dimension);
             index.add([1, 0]);
