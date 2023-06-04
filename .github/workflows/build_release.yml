@@ -2,6 +2,8 @@ name: Build Pre-build Packages for Alpine
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -13,4 +15,4 @@ jobs:
     - name: Prepare Image
       run: docker build -f Dockerfile.build -t faiss-build-alpine .
     - name: Build
-      run: docker run --rm -it faiss-build-alpine build
+      run: docker run --rm -it faiss-build-alpine run prebuild-package -- --all
