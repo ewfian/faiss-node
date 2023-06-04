@@ -3,9 +3,8 @@ name: Build Pre-build Packages for Alpine
 on:
   workflow_dispatch:
   push:
-    branches: ["main"]
-  pull_request:
-    branches: [ "main" ]
+    tags:
+      - '*'
 
 concurrency:
   group: release
