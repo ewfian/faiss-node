@@ -1,0 +1,10 @@
+FROM node:18-alpine
+WORKDIR /app
+RUN apk add cmake build-base openblas-dev
+COPY package*.json ./
+RUN npm ci --ignore-scripts
+COPY . .
+# RUN npm run build
+
+ENTRYPOINT ["tail"]
+CMD ["-f","/dev/null"]

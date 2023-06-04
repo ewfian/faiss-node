@@ -1,0 +1,26 @@
+name: Build Pre-build Packages for Alpine
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - '*'
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    environment: release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+    - name: Prepare Image
+      run: docker build -f Dockerfile.build -t faiss-build-alpine .
+    - name: Build & test
+      run: docker run --rm faiss-build-alpine
+    - name: Build Release
+      run: docker run --rm faiss-build-alpine run prebuild-package -- -u ${{ secrets.GH_TOKEN }} --all

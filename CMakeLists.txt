@@ -92,14 +92,32 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
             libmkl_sequential.so
             libmkl_core.so)
         foreach(dep ${DEPENDANCES_MKL})
-        file(TO_CMAKE_PATH "$ENV{MKLROOT}/lib/intel64/${dep}" MKL_dep)
-        message("Copy DEPENDANCES_MKL: " ${MKL_dep})
-        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${MKL_dep}
-                $<TARGET_FILE_DIR:${PROJECT_NAME}>)
-        endforeach(file_i)
+            file(TO_CMAKE_PATH "$ENV{MKLROOT}/lib/intel64/${dep}" MKL_dep)
+            message("Copy DEPENDANCES_MKL: " ${MKL_dep})
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    ${MKL_dep}
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+        endforeach()
     endif()
+    if(EXISTS "/etc/alpine-release")
+        # Alpine
+        message("Alpine")
+        # Copy libgomp.so.1, libopenblas.so.3, libgfortran.so.5, libquadmath.so.0
+        set(DEPENDANCES_MUSL
+            libgomp.so.1
+            libopenblas.so.3
+            libgfortran.so.5
+            libquadmath.so.0)
+        foreach(dep ${DEPENDANCES_MUSL})
+            file(TO_CMAKE_PATH "/usr/lib/${dep}" MUSL_dep)
+            message("Copy DEPENDANCES_MUSL: " ${MUSL_dep})
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    ${MUSL_dep}
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+        endforeach()
+    ENDIF()
 endif()
 
 if(APPLE)

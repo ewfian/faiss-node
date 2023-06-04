@@ -1,0 +1,5 @@
+build/
+node_modules/
+docs/
+.DS_Store
+faiss.index
