@@ -2,11 +2,18 @@ name: Build Pre-build Packages for Alpine
 
 on:
   workflow_dispatch:
+  push:
+    branches: ["main"]
   pull_request:
     branches: [ "main" ]
 
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
   build:
+    environment: release
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -17,4 +24,4 @@ jobs:
     - name: Build & test
       run: docker run --rm faiss-build-alpine
     - name: Build Release
-      run: docker run --rm faiss-build-alpine run prebuild-package -- --all
+      run: docker run --rm faiss-build-alpine run prebuild-package -- -u ${{ secrets.GH_ }} --all
