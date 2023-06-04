@@ -6,3 +6,5 @@ RUN npm ci --ignore-scripts
 COPY . .
 
 ENTRYPOINT ["npm"]
+CMD ["run", "build"]
+CMD ["test"]
