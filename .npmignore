@@ -11,5 +11,5 @@ node_modules/
 build/
 docs/
 package-lock.json
-faiss.index
+*.index
 test-import/

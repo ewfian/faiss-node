@@ -16,6 +16,26 @@ describe('IndexFlatL2', () => {
         });
     });
 
+    describe('#read', () => {
+        it('throws an error if file does not existed', () => {
+            const fname = 'not_existed_file'
+            expect(() => { IndexFlatL2.read(fname) }).toThrow(new RegExp(`^Error.*could not open ${fname} for reading: No such file or directory$`));
+        });
+
+        it('read saved file.', () => {
+            const dimension = 2;
+            const index = new IndexFlatL2(dimension);
+            index.add([1, 0]);
+
+            const fname = '_tmp.test.read.index';
+            index.write(fname);
+
+            const index_loaded = IndexFlatL2.read(fname);
+            expect(index_loaded.getDimension()).toBe(2);
+            expect(index_loaded.ntotal()).toBe(1);
+        })
+    });
+
     describe('#ntotal', () => {
         const index = new IndexFlatL2(1);
 

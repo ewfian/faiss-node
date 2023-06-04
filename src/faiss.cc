@@ -4,6 +4,7 @@
 #include <random>
 #include <faiss/IndexFlat.h>
 #include <faiss/index_io.h>
+#include <faiss/impl/FaissException.h>
 
 using namespace Napi;
 using idx_t = faiss::idx_t;
@@ -17,7 +18,14 @@ public:
     if (info[0].IsExternal())
     {
       const std::string fname = *info[0].As<Napi::External<std::string>>().Data();
-      index_ = std::unique_ptr<faiss::IndexFlatL2>(dynamic_cast<faiss::IndexFlatL2 *>(faiss::read_index(fname.c_str())));
+      try
+      {
+        index_ = std::unique_ptr<faiss::IndexFlatL2>(dynamic_cast<faiss::IndexFlatL2 *>(faiss::read_index(fname.c_str())));
+      }
+      catch (const faiss::FaissException& ex)
+      {
+        Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
+      }
     }
     else
     {
