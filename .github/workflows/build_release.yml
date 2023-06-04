@@ -24,4 +24,4 @@ jobs:
     - name: Build & test
       run: docker run --rm faiss-build-alpine
     - name: Build Release
-      run: docker run --rm faiss-build-alpine run prebuild-package -- -u ${{ secrets.GH_ }} --all
+      run: docker run --rm faiss-build-alpine run prebuild-package -- -u ${{ secrets.GH_TOKEN }} --all
