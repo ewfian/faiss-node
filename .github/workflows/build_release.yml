@@ -16,5 +16,5 @@ jobs:
       run: docker build -f Dockerfile.build -t faiss-build-alpine .
     - name: Build & test
       run: docker run --rm faiss-build-alpine
-    - name: Build & test
+    - name: Build Release
       run: docker run --rm faiss-build-alpine run prebuild-package -- --all
