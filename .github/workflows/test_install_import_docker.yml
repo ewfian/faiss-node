@@ -40,8 +40,6 @@ jobs:
     - name: Build docker on node:${{ matrix.node }}${{ matrix.distro }}
       working-directory: ./test-import
       run: docker buildx build --platform ${{ matrix.platform }} -t ${{ matrix.platform }}-test-import --build-arg BASE_IMAGE=node:${{ matrix.node }}${{ matrix.distro }} .
-    - name: Inspect artifacts
-      run: docker buildx imagetools inspect test-import
     - name: Run test
       working-directory: ./test-import
       run: docker run ${{ matrix.platform }}-test-import
