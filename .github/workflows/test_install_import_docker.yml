@@ -36,7 +36,9 @@ jobs:
       run: mv faiss-node-*.tgz test-import/faiss-node.tgz
     - name: Build docker on node:${{ matrix.node }}${{ matrix.distro }}
       working-directory: ./test-import
-      run: docker buildx --platform linux/amd64,linux/arm64 -t test-import --build-arg BASE_IMAGE=node:${{ matrix.node }}${{ matrix.distro }} .
+      run: docker buildx build --platform linux/amd64,linux/arm64 -t test-import --build-arg BASE_IMAGE=node:${{ matrix.node }}${{ matrix.distro }} .
+    - name: Inspect artifacts
+      run: docker buildx imagetools inspect
     - name: Run test
       working-directory: ./test-import
       run: docker run test-import
