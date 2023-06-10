@@ -27,8 +27,8 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 18
-    # - name: Set up QEMU
-    #   uses: docker/setup-qemu-action@v2
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
     - name: Check available builders
@@ -39,7 +39,7 @@ jobs:
       run: mv faiss-node-*.tgz test-import/faiss-node.tgz
     - name: Build docker on node:${{ matrix.node }}${{ matrix.distro }}
       working-directory: ./test-import
-      run: docker buildx build --platform {{ matrix.platform }} -t test-import --build-arg BASE_IMAGE=node:${{ matrix.node }}${{ matrix.distro }} .
+      run: docker buildx build --platform ${{ matrix.platform }} -t test-import --build-arg BASE_IMAGE=node:${{ matrix.node }}${{ matrix.distro }} .
     - name: Inspect artifacts
       run: docker buildx imagetools inspect test-import
     - name: Run test
