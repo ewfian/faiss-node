@@ -27,10 +27,10 @@ jobs:
     - name: Prepare Image
       run: docker buildx build --platform linux/arm64 -o type=docker -f Dockerfile.build -t faiss-build-alpine .
     - name: inspect
-      run:  ls -lat /usr/lib/
+      run: docker run --rm --entrypoint ls faiss-build-alpine /app/build/Release/faiss-node.node -lat /usr/lib/
     - name: Build & test
       run: docker run --rm faiss-build-alpine
     - name: inspect
-      run:  ldd /app/build/Release/faiss-node.node
+      run: docker run --rm --entrypoint ldd faiss-build-alpine /app/build/Release/faiss-node.node
     - name: Build Release
       run: docker run --rm faiss-build-alpine run prebuild-package
