@@ -18,23 +18,23 @@ jobs:
             arch: 'linux/amd64'
           },
           {
-            distro: 'buster',
+            distro: '-buster',
             arch: 'linux/amd64'
           },
           {
-            distro: 'bullseye',
+            distro: '-bullseye',
             arch: 'linux/amd64'
           },
           {
-            distro: 'alpine',
+            distro: '-alpine',
             arch: 'linux/amd64'
           },
           {
-            distro: 'alpine',
+            distro: '-alpine',
             arch: 'linux/arm64'
           },
           {
-            distro: 'alpine',
+            distro: '-alpine',
             arch: 'linux/arm/v7'
           }
         ]
