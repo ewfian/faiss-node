@@ -12,14 +12,32 @@ jobs:
       fail-fast: false
       matrix:
         node: ['14', '16', '18', '20']
-        distro:
-          - ''
-          - -buster
-          - -bullseye
-          - -alpine
-        platform:
-          - 'amd64'
-          - 'arm64'
+        platform: [
+          {
+            distro: '',
+            arch: 'linux/amd64'
+          },
+          {
+            distro: 'buster',
+            arch: 'linux/amd64'
+          },
+          {
+            distro: 'bullseye',
+            arch: 'linux/amd64'
+          },
+          {
+            distro: 'alpine',
+            arch: 'linux/amd64'
+          },
+          {
+            distro: 'alpine',
+            arch: 'linux/arm64'
+          },
+          {
+            distro: 'alpine',
+            arch: 'linux/arm/v7'
+          }
+        ]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -35,9 +53,9 @@ jobs:
       run: npm pack
     - name: Rename Package
       run: mv faiss-node-*.tgz test-import/faiss-node.tgz
-    - name: Build docker on node:${{ matrix.node }}${{ matrix.distro }}
+    - name: Build docker on node:${{ matrix.node }}${{ matrix.platform.distro }}
       working-directory: ./test-import
-      run: docker buildx build --platform linux/${{ matrix.platform }} -o type=docker -t test-import-${{ matrix.platform }} --build-arg BASE_IMAGE=node:${{ matrix.node }}${{ matrix.distro }} .
+      run: docker buildx build --platform ${{ matrix.platform.arch }} -o type=docker -t test-import --build-arg BASE_IMAGE=node:${{ matrix.node }}${{ matrix.platform.distro }} .
     - name: Run test
       working-directory: ./test-import
-      run: docker run test-import-${{ matrix.platform }}
+      run: docker run test-import
