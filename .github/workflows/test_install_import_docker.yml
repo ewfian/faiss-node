@@ -33,10 +33,10 @@ jobs:
             distro: '-alpine',
             arch: 'linux/arm64'
           },
-          {
-            distro: '-alpine',
-            arch: 'linux/arm/v7'
-          }
+          # {
+          #   distro: '-alpine',
+          #   arch: 'linux/arm/v7'
+          # }
         ]
     runs-on: ubuntu-latest
     steps:
