@@ -1,0 +1,30 @@
+name: Build Pre-build Packages for Alpine arm64
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - '*'
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    environment: release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Prepare Image
+      run: docker buildx build --platform linux/arm64 -o type=docker -f Dockerfile.build -t faiss-build-alpine .
+    - name: Build & test
+      run: docker run --rm --platform linux/arm64 faiss-build-alpine
+    - name: Build Release
+      run: docker run --rm --platform linux/arm64 faiss-build-alpine run prebuild-package -- --all
