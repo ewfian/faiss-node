@@ -102,13 +102,22 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     endif()
     if(EXISTS "/etc/alpine-release")
         # Alpine
-        message("Alpine")
-        # Copy libgomp.so.1, libopenblas.so.3, libgfortran.so.5, libquadmath.so.0
-        set(DEPENDANCES_MUSL
-            libgomp.so.1
-            libopenblas.so.3
-            libgfortran.so.5
-            libquadmath.so.0)
+        EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
+        message("Alpine:" ${ARCHITECTURE})
+        if( ${ARCHITECTURE} STREQUAL "x86_64" )
+            # Copy libgomp.so.1, libopenblas.so.3, libgfortran.so.5, libquadmath.so.0
+            set(DEPENDANCES_MUSL
+                libgomp.so.1
+                libopenblas.so.3
+                libgfortran.so.5
+                libquadmath.so.0)
+        else()
+            # Copy libgomp.so.1, libopenblas.so.3, libgfortran.so.5
+            set(DEPENDANCES_MUSL
+                libgomp.so.1
+                libopenblas.so.3
+                libgfortran.so.5)
+        endif()
         foreach(dep ${DEPENDANCES_MUSL})
             file(TO_CMAKE_PATH "/usr/lib/${dep}" MUSL_dep)
             message("Copy DEPENDANCES_MUSL: " ${MUSL_dep})
