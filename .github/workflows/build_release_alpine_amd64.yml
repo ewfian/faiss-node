@@ -23,7 +23,7 @@ jobs:
     - name: Build & test
       run: docker run --rm faiss-build-alpine
     - name: Build Release
-      run: docker run --rm -v ./prebuilds:/app/prebuilds faiss-build-alpine run prebuild-package
+      run: docker run --rm -v $(pwd)/prebuilds:/app/prebuilds faiss-build-alpine run prebuild-package
     - name: inspect
       run: ls prebuilds && pwd
     - name: Upload to Release
