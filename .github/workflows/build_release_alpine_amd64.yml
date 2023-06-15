@@ -24,9 +24,11 @@ jobs:
       run: docker run --rm faiss-build-alpine
     - name: Build Release
       run: docker run --rm faiss-build-alpine run prebuild-package -- --all
+    - name: inspect
+      run: ls prebuilds && pwd
     - name: Upload to Release
       uses: softprops/action-gh-release@v1
       with:
         draft: true
         fail_on_unmatched_files: true
-        files: prebuilds/*
+        files: prebuilds/*.tar.gz
