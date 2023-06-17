@@ -1,0 +1,43 @@
+name: Build Pre-build Packages for Darwin
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - '*'
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    environment: release
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+    - name: Install libomp
+      run: |
+        brew install libomp
+        brew info libomp
+    - name: Setup Node.js 18
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+    - name: NPM Install
+      run: npm ci --ignore-scripts
+    - name: Build & test
+      run: npm run build:test
+    - name: Build Release
+      run: npm run prebuild-package -- --all
+    - name: Upload to Release
+      uses: softprops/action-gh-release@v1
+      with:
+        draft: true
+        fail_on_unmatched_files: true
+        files: prebuilds/*.tar.gz
+        tag_name: 'v0.2.2-alpha.0'
