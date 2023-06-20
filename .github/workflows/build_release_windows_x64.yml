@@ -6,9 +6,6 @@ on:
     tags:
       - '*'
 
-env:
-  WINDOWS_BASEKIT_URL: https:/registrationcenter-download.intel.com/akdlm/IRC_NAS/c961e083-5685-4f0b-ada5-c6cf16f561dd/w_BaseKit_p_2023.1.0.47256_offline.exe
-
 concurrency:
   group: release
   cancel-in-progress: false
@@ -24,7 +21,7 @@ jobs:
       with:
         submodules: 'true'
     - name: Install MKL
-      run: .github/workflows/install_mkl_windows.bat env.WINDOWS_BASEKIT_URL "intel.oneapi.win.mkl.devel"
+      run: .github/workflows/install_mkl_windows.bat "https:/registrationcenter-download.intel.com/akdlm/IRC_NAS/c961e083-5685-4f0b-ada5-c6cf16f561dd/w_BaseKit_p_2023.1.0.47256_offline.exe" "intel.oneapi.win.mkl.devel"
     - name: Setup Node.js 18
       uses: actions/setup-node@v3
       with:
