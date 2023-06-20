@@ -24,7 +24,7 @@ jobs:
       with:
         submodules: 'true'
     - name: Install MKL
-      run: .github/workflows/install_mkl_windows.bat $WINDOWS_BASEKIT_URL "intel.oneapi.win.mkl.devel"
+      run: .github/workflows/install_mkl_windows.bat env.WINDOWS_BASEKIT_URL "intel.oneapi.win.mkl.devel"
     - name: Setup Node.js 18
       uses: actions/setup-node@v3
       with:
