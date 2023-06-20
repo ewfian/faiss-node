@@ -46,4 +46,4 @@ jobs:
         draft: true
         fail_on_unmatched_files: true
         files: prebuilds/*.tar.gz
-        tag_name: ${{ steps.version.outputs.VERSION }}
+        tag_name: "v${{ steps.version.outputs.VERSION }}"
