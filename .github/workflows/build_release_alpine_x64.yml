@@ -26,10 +26,16 @@ jobs:
       run: docker run --rm faiss-build-alpine
     - name: Build Release
       run: docker run --rm -v $(pwd)/prebuilds:/app/prebuilds faiss-build-alpine run prebuild-package -- --all
+    - name: Get Version
+      id: version
+      run : |
+        VERSION=$(node -p -e "require('./package.json').version")
+        echo $VERSION
+        echo VERSION=$VERSION >> "$GITHUB_OUTPUT"
     - name: Upload to Release
       uses: softprops/action-gh-release@v1
       with:
         draft: true
         fail_on_unmatched_files: true
         files: prebuilds/*.tar.gz
-        tag_name: 'v0.2.2-alpha.0'
+        tag_name: "v${{ steps.version.outputs.VERSION }}"
