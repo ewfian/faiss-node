@@ -22,8 +22,11 @@ jobs:
         submodules: 'true'
     - name: Install dependencies
       run: |
+        curl -fsSL https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | sudo gpg --dearmor -o /etc/apt/keyrings/intel.gpg
+        sudo sh -c 'echo deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/intel.gpg] https://apt.repos.intel.com/mkl all main > /etc/apt/sources.list.d/intel-mkl.list'
         sudo apt-get update
-        sudo apt-get install -y libmkl-dev
+        sudo apt-get install -y intel-mkl-2020.4-912
+        export MKLROOT="/opt/intel/mkl"
     - name: Setup Node.js 18
       uses: actions/setup-node@v3
       with:
@@ -31,13 +34,9 @@ jobs:
     - name: NPM Install
       run: npm ci --ignore-scripts
     - name: Build & test
-      run:  |
-        export MKLROOT=/opt/intel/mkl
-        npm run build:test
+      run: npm run build:test
     - name: Build Release
-      run: |
-        export MKLROOT=/opt/intel/mkl
-        npm run prebuild-package -- --all
+      run: npm run prebuild-package -- --all
     - name: Upload to Release
       uses: softprops/action-gh-release@v1
       with:
