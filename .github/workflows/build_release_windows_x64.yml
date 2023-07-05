@@ -28,11 +28,11 @@ jobs:
         with:
           node-version: 18
       - name: NPM Install
+        run: npm ci --ignore-scripts
+      - name: Build & test
         run: |
           set MKLROOT="C:\Program Files (x86)\Intel\oneAPI\mkl\latest"
-          npm ci --ignore-scripts
-      - name: Build & test
-        run: npm run build:test
+          npm run build:test
     # - name: Build Release
     #   run: npm run prebuild-package -- --all
     # - name: Get Version
