@@ -38,18 +38,20 @@ jobs:
           export MKLROOT="/opt/intel/mkl"
           npm run build:test
           ls build/Release
-    # - name: Build Release
-    #   run: npm run prebuild-package -- --all
-    # - name: Get Version
-    #   id: version
-    #   run : |
-    #     VERSION=$(node -p -e "require('./package.json').version")
-    #     echo $VERSION
-    #     echo VERSION=$VERSION >> "$GITHUB_OUTPUT"
-    # - name: Upload to Release
-    #   uses: softprops/action-gh-release@v1
-    #   with:
-    #     draft: true
-    #     fail_on_unmatched_files: true
-    #     files: prebuilds/*.tar.gz
-    #     tag_name: "v${{ steps.version.outputs.VERSION }}"
+      - name: Build Release
+        run: |
+          export MKLROOT="/opt/intel/mkl"
+          npm run prebuild-package -- --all
+      - name: Get Version
+        id: version
+        run: |
+          VERSION=$(node -p -e "require('./package.json').version")
+          echo $VERSION
+          echo VERSION=$VERSION >> "$GITHUB_OUTPUT"
+      # - name: Upload to Release
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     draft: true
+      #     fail_on_unmatched_files: true
+      #     files: prebuilds/*.tar.gz
+      #     tag_name: "v${{ steps.version.outputs.VERSION }}"
