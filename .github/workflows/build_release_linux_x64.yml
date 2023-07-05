@@ -26,7 +26,6 @@ jobs:
           sudo sh -c 'echo deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/intel.gpg] https://apt.repos.intel.com/mkl all main > /etc/apt/sources.list.d/intel-mkl.list'
           sudo apt-get update
           sudo apt-get install -y intel-mkl-2020.4-912
-          ls /usr/lib/x86_64-linux-gnu/
           ls /opt/intel/mkl
       - name: Setup Node.js 18
         uses: actions/setup-node@v3
@@ -38,6 +37,7 @@ jobs:
         run: |
           export MKLROOT="/opt/intel/mkl"
           npm run build:test
+          ls build/Release
     # - name: Build Release
     #   run: npm run prebuild-package -- --all
     # - name: Get Version
