@@ -31,7 +31,7 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Build & test
         run: |
-          setx MKLROOT "C:\Program Files (x86)\Intel\oneAPI\mkl\latest"
+          setx MKLROOT "C:\Program Files (x86)\Intel\oneAPI\mkl\latest" /m
           npm run build:test
     # - name: Build Release
     #   run: npm run prebuild-package -- --all
