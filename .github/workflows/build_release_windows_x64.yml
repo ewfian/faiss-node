@@ -6,6 +6,9 @@ on:
     tags:
       - "*"
 
+env:
+  MKLROOT: 'C:\Program Files (x86)\Intel\oneAPI\mkl\latest'
+
 concurrency:
   group: release
   cancel-in-progress: false
@@ -29,7 +32,7 @@ jobs:
       - name: NPM Install
         run: npm ci --ignore-scripts
       - name: Build & test
-        run: MKLROOT="C:\Program Files (x86)\Intel\oneAPI\mkl\latest" npm run build:test
+        run: npm run build:test
     # - name: Build Release
     #   run: npm run prebuild-package -- --all
     # - name: Get Version
