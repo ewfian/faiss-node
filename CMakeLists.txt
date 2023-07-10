@@ -5,7 +5,7 @@ cmake_policy(SET CMP0042 NEW)
 project(faiss-node LANGUAGES CXX)
 
 if(WIN32)
-    message("LOGGING MKLROOT ENV"})
+    message("LOGGING MKLROOT ENV")
     if(DEFINED ENV{MKLROOT})
         message("MKLROOT: " ${MKLROOT})
     endif()

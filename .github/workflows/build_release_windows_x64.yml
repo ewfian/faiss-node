@@ -21,8 +21,7 @@ jobs:
         with:
           submodules: "true"
       - name: Install MKL
-        run: |
-          .github/workflows/install_mkl_windows.bat "https:/registrationcenter-download.intel.com/akdlm/IRC_NAS/c961e083-5685-4f0b-ada5-c6cf16f561dd/w_BaseKit_p_2023.1.0.47256_offline.exe" "intel.oneapi.win.mkl.devel"
+        run: .github/workflows/install_mkl_windows.bat "https:/registrationcenter-download.intel.com/akdlm/IRC_NAS/c961e083-5685-4f0b-ada5-c6cf16f561dd/w_BaseKit_p_2023.1.0.47256_offline.exe" "intel.oneapi.win.mkl.devel"
       - name: Setup Node.js 18
         uses: actions/setup-node@v3
         with:
@@ -30,10 +29,7 @@ jobs:
       - name: NPM Install
         run: npm ci --ignore-scripts
       - name: Build & test
-        run: |
-          setx MKLROOT "C:\Program Files (x86)\Intel\oneAPI\mkl\latest" /m
-          ls "C:\Program Files (x86)\Intel\oneAPI\mkl\latest"
-          npm run build:test
+        run: MKLROOT="C:\Program Files (x86)\Intel\oneAPI\mkl\latest" npm run build:test
     # - name: Build Release
     #   run: npm run prebuild-package -- --all
     # - name: Get Version
