@@ -32,6 +32,7 @@ jobs:
       - name: Build & test
         run: |
           setx MKLROOT "C:\Program Files (x86)\Intel\oneAPI\mkl\latest" /m
+          ls "C:\Program Files (x86)\Intel\oneAPI\mkl\latest"
           npm run build:test
     # - name: Build Release
     #   run: npm run prebuild-package -- --all
