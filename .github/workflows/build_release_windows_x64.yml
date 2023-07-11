@@ -40,7 +40,7 @@ jobs:
       - name: Get Version
         id: version
         run: |
-          VERSION=$(node -p -e "require('./package.json').version")
+          $VERSION=$(node -p -e "require('./package.json').version")
           echo $VERSION
           echo VERSION=$VERSION >> "$GITHUB_OUTPUT"
       # - name: Upload to Release
