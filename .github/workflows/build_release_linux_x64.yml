@@ -6,6 +6,9 @@ on:
     tags:
       - "*"
 
+env:
+  MKLROOT: '/opt/intel/mkl'
+
 concurrency:
   group: release
   cancel-in-progress: false
@@ -35,13 +38,10 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Build & test
         run: |
-          export MKLROOT="/opt/intel/mkl"
           npm run build:test
           ls build/Release
       - name: Build Release
-        run: |
-          export MKLROOT="/opt/intel/mkl"
-          npm run prebuild-package -- --all
+        run: npm run prebuild-package -- --all
       - name: Get Version
         id: version
         run: |
