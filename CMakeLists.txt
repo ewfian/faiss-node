@@ -119,6 +119,10 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
                         ${MUSL_dep}
                         $<TARGET_FILE_DIR:${PROJECT_NAME}>)
             endforeach()
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND patchelf --set-rpath "\\$$ORIGIN/" $<TARGET_FILE_DIR:${PROJECT_NAME}>/libopenblas.so.0
+                COMMAND patchelf --set-rpath "\\$$ORIGIN/" $<TARGET_FILE_DIR:${PROJECT_NAME}>/libgfortran.so.5
+            )
         else()
             # Copy libgomp.so.1, libopenblas.so.0, libgfortran.so.5
             set(DEPENDANCES
@@ -133,6 +137,10 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
                         ${MUSL_dep}
                         $<TARGET_FILE_DIR:${PROJECT_NAME}>)
             endforeach()
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND patchelf --set-rpath "\\$$ORIGIN/" $<TARGET_FILE_DIR:${PROJECT_NAME}>/libopenblas.so.0
+                COMMAND patchelf --set-rpath "\\$$ORIGIN/" $<TARGET_FILE_DIR:${PROJECT_NAME}>/libgfortran.so.5
+            )
         endif()
     endif()
     if(EXISTS "/etc/alpine-release")
