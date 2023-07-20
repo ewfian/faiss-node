@@ -5,8 +5,6 @@ on:
   push:
     tags:
       - '*'
-  pull_request:
-    branches: [ "main" ]
 
 concurrency:
   group: release
@@ -38,10 +36,10 @@ jobs:
         VERSION=$(node -p -e "require('./package.json').version")
         echo $VERSION
         echo VERSION=$VERSION >> "$GITHUB_OUTPUT"
-    # - name: Upload to Release
-    #   uses: softprops/action-gh-release@v1
-    #   with:
-    #     draft: true
-    #     fail_on_unmatched_files: true
-    #     files: prebuilds/*.tar.gz
-    #     tag_name: "v${{ steps.version.outputs.VERSION }}"
+    - name: Upload to Release
+      uses: softprops/action-gh-release@v1
+      with:
+        draft: true
+        fail_on_unmatched_files: true
+        files: prebuilds/*.tar.gz
+        tag_name: "v${{ steps.version.outputs.VERSION }}"
