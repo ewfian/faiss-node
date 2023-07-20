@@ -5,6 +5,8 @@ on:
   push:
     tags:
       - '*'
+  pull_request:
+    branches: [ "main" ]
 
 concurrency:
   group: release
