@@ -4,9 +4,7 @@ on:
   workflow_dispatch:
   push:
     tags:
-      - '*'
-  pull_request:
-    branches: [ "main" ]
+      - "*"
 
 concurrency:
   group: release
@@ -19,29 +17,29 @@ jobs:
     permissions:
       contents: write
     steps:
-    - uses: actions/checkout@v3
-      with:
-        submodules: 'true'
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v2
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-    - name: Prepare Image
-      run: docker buildx build --platform linux/amd64 -o type=docker -f Dockerfile.buildlinux -t faiss-build-linux .
-    - name: Build & test
-      run: docker run --rm --platform linux/amd64 faiss-build-linux
-    - name: Build Release
-      run: docker run --rm -v $(pwd)/prebuilds:/app/prebuilds --platform linux/amd64 faiss-build-linux run prebuild-package -- --all
-    - name: Get Version
-      id: version
-      run : |
-        VERSION=$(node -p -e "require('./package.json').version")
-        echo $VERSION
-        echo VERSION=$VERSION >> "$GITHUB_OUTPUT"
-    # - name: Upload to Release
-    #   uses: softprops/action-gh-release@v1
-    #   with:
-    #     draft: true
-    #     fail_on_unmatched_files: true
-    #     files: prebuilds/*.tar.gz
-    #     tag_name: "v${{ steps.version.outputs.VERSION }}"
+      - uses: actions/checkout@v3
+        with:
+          submodules: "true"
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Prepare Image
+        run: docker buildx build --platform linux/amd64 -o type=docker -f Dockerfile.buildlinux -t faiss-build-linux .
+      - name: Build & test
+        run: docker run --rm --platform linux/amd64 faiss-build-linux
+      - name: Build Release
+        run: docker run --rm -v $(pwd)/prebuilds:/app/prebuilds --platform linux/amd64 faiss-build-linux run prebuild-package -- --all
+      - name: Get Version
+        id: version
+        run: |
+          VERSION=$(node -p -e "require('./package.json').version")
+          echo $VERSION
+          echo VERSION=$VERSION >> "$GITHUB_OUTPUT"
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          fail_on_unmatched_files: true
+          files: prebuilds/*.tar.gz
+          tag_name: "v${{ steps.version.outputs.VERSION }}"
