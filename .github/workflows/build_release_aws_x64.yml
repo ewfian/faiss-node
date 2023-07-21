@@ -1,0 +1,53 @@
+name: Build Pre-build Packages for AWS
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "*"
+  pull_request:
+    branches: [ "main" ]
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    environment: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: "true"
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: NPM Pack
+        run: npm pack
+      - name: Rename Package
+        run: mv faiss-node-*.tgz faiss-node.tgz
+      - name: Build & test
+        run: docker build -f Dockerfile.buildaws -t faiss-build-aws .
+      - name: Build & test
+        run: |
+          tempid=$(docker create faiss-build-aws)
+          docker cp $tempid:/var/task aws
+          docker rm -v $tempid
+          cd aws && ls -laht && zip -r aws.zip .
+      - name: Get Version
+        id: version
+        run: |
+          VERSION=$(node -p -e "require('./package.json').version")
+          echo $VERSION
+          echo VERSION=$VERSION >> "$GITHUB_OUTPUT"
+      # - name: Upload to Release
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     draft: true
+      #     fail_on_unmatched_files: true
+      #     files: aws/*.zip
+      #     tag_name: "v${{ steps.version.outputs.VERSION }}"
