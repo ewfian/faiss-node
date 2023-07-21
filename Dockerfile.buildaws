@@ -17,6 +17,7 @@ RUN npm run build:test
 FROM public.ecr.aws/lambda/nodejs:18
 COPY faiss-node.tgz ./
 RUN npm init -y && npm i faiss-node.tgz --ignore-scripts && rm faiss-node.tgz
+COPY examples/index-aws.mjs index.mjs
 COPY examples/index.js index.js
 COPY --from=build /var/task/build/Release/faiss-node.node node_modules/faiss-node/build/Release/faiss-node.node
 COPY --from=build /var/task/build/Release/libfaiss.a node_modules/faiss-node/build/Release/libfaiss.a
