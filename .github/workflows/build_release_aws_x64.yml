@@ -43,7 +43,9 @@ jobs:
           tempid=$(docker create faiss-build-aws)
           docker cp $tempid:/var/task aws
           docker rm -v $tempid
-          cd aws && ls -laht && zip -r faiss-node-v${{ steps.version.outputs.VERSION }}-aws-x64.zip .
+          cd aws && ls -laht
+          mkdir nodejs && mv node_modules nodejs/node_modules && ln -s nodejs/node_modules node_modules
+          zip -r --symlinks faiss-node-v${{ steps.version.outputs.VERSION }}-aws-x64.zip .
       # - name: Upload to Release
       #   uses: softprops/action-gh-release@v1
       #   with:

@@ -1,7 +1,6 @@
-import pkg from 'faiss-node'
+const { IndexFlatL2 } = require('faiss-node');
 
-export const handler = async(event) => {
-    const { IndexFlatL2 } = pkg
+exports.handler = async function(event, context) {
     const dimension = 2;
     const index = new IndexFlatL2(dimension);
 
@@ -21,4 +20,3 @@ export const handler = async(event) => {
 
     return results;
 };
-
