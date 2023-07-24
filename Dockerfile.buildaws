@@ -1,0 +1,29 @@
+FROM public.ecr.aws/lambda/nodejs:18 as build
+COPY package*.json ./
+RUN npm ci --ignore-scripts
+
+RUN yum -y install wget tar gzip gcc gcc-c++ make lapack-devel patchelf
+RUN wget -q https://github.com/Kitware/CMake/releases/download/v3.27.0/cmake-3.27.0-linux-x86_64.sh && \
+    sh cmake-3.27.0-linux-x86_64.sh --skip-license --exclude-subdir --prefix=/usr/local
+
+RUN patchelf --set-rpath "\$ORIGIN/" /lib64/libgfortran.so.4
+
+ENTRYPOINT ["tail"]
+CMD ["-f","/dev/null"]
+COPY . .
+RUN npm run build:test
+
+
+FROM public.ecr.aws/lambda/nodejs:18
+COPY faiss-node.tgz ./
+RUN npm init -y && npm i faiss-node.tgz --ignore-scripts && rm faiss-node.tgz
+COPY examples/index-aws.js index.js
+COPY --from=build /var/task/build/Release/faiss-node.node node_modules/faiss-node/build/Release/faiss-node.node
+COPY --from=build /var/task/build/Release/libfaiss.a node_modules/faiss-node/build/Release/libfaiss.a
+COPY --from=build /lib64/libgomp.so.1 node_modules/faiss-node/build/Release/libgomp.so.1
+COPY --from=build /lib64/libpthread.so.0 node_modules/faiss-node/build/Release/libpthread.so.0
+COPY --from=build /lib64/libblas.so.3 node_modules/faiss-node/build/Release/libblas.so.3
+COPY --from=build /lib64/liblapack.so.3 node_modules/faiss-node/build/Release/liblapack.so.3
+COPY --from=build /lib64/libgfortran.so.4 node_modules/faiss-node/build/Release/libgfortran.so.4
+COPY --from=build /lib64/libquadmath.so.0 node_modules/faiss-node/build/Release/libquadmath.so.0
+RUN node index.js
