@@ -42,7 +42,7 @@ jobs:
         run: |
           $VERSION=$(node -p -e "require('./package.json').version")
           echo $VERSION
-          echo VERSION=$VERSION >> "$GITHUB_OUTPUT"
+          echo VERSION=$VERSION >> $env:$GITHUB_OUTPUT
       - name: Upload to Release
         uses: softprops/action-gh-release@v1
         with:
