@@ -101,46 +101,50 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         endforeach()
     endif()
     if(EXISTS "/etc/debian_version")
-        # Debian
-        EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
-        message("Debian:" ${ARCHITECTURE})
-        if( ${ARCHITECTURE} STREQUAL "x86_64" )
-            # Copy libgomp.so.1, libopenblas.so.0, libgfortran.so.5, libquadmath.so.0
-            set(DEPENDANCES
-                libgomp.so.1
-                libopenblas.so.0
-                libgfortran.so.5
-                libquadmath.so.0)
-            foreach(dep ${DEPENDANCES})
-                file(TO_CMAKE_PATH "/lib/x86_64-linux-gnu/${dep}" MUSL_dep)
-                message("Copy DEPENDANCES: " ${MUSL_dep})
+        file(READ "/etc/issue" ETC_ISSUE)
+        string(REGEX MATCH "Debian|Ubuntu" DIST ${ETC_ISSUE})
+        if(DIST STREQUAL "Debian")
+            # Debian
+            EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
+            message("Debian:" ${ARCHITECTURE})
+            if( ${ARCHITECTURE} STREQUAL "x86_64" )
+                # Copy libgomp.so.1, libopenblas.so.0, libgfortran.so.5, libquadmath.so.0
+                set(DEPENDANCES
+                    libgomp.so.1
+                    libopenblas.so.0
+                    libgfortran.so.5
+                    libquadmath.so.0)
+                foreach(dep ${DEPENDANCES})
+                    file(TO_CMAKE_PATH "/lib/x86_64-linux-gnu/${dep}" MUSL_dep)
+                    message("Copy DEPENDANCES: " ${MUSL_dep})
+                    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                            ${MUSL_dep}
+                            $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+                endforeach()
                 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                        ${MUSL_dep}
-                        $<TARGET_FILE_DIR:${PROJECT_NAME}>)
-            endforeach()
-            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                COMMAND patchelf --set-rpath "\\$$ORIGIN/" $<TARGET_FILE_DIR:${PROJECT_NAME}>/libopenblas.so.0
-                COMMAND patchelf --set-rpath "\\$$ORIGIN/" $<TARGET_FILE_DIR:${PROJECT_NAME}>/libgfortran.so.5
-            )
-        else()
-            # Copy libgomp.so.1, libopenblas.so.0, libgfortran.so.5
-            set(DEPENDANCES
-                libgomp.so.1
-                libopenblas.so.0
-                libgfortran.so.5)
-            foreach(dep ${DEPENDANCES})
-                file(TO_CMAKE_PATH "/lib/aarch64-linux-gnu/${dep}" MUSL_dep)
-                message("Copy DEPENDANCES: " ${MUSL_dep})
+                    COMMAND patchelf --set-rpath "\\$$ORIGIN/" $<TARGET_FILE_DIR:${PROJECT_NAME}>/libopenblas.so.0
+                    COMMAND patchelf --set-rpath "\\$$ORIGIN/" $<TARGET_FILE_DIR:${PROJECT_NAME}>/libgfortran.so.5
+                )
+            else()
+                # Copy libgomp.so.1, libopenblas.so.0, libgfortran.so.5
+                set(DEPENDANCES
+                    libgomp.so.1
+                    libopenblas.so.0
+                    libgfortran.so.5)
+                foreach(dep ${DEPENDANCES})
+                    file(TO_CMAKE_PATH "/lib/aarch64-linux-gnu/${dep}" MUSL_dep)
+                    message("Copy DEPENDANCES: " ${MUSL_dep})
+                    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                            ${MUSL_dep}
+                            $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+                endforeach()
                 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                        ${MUSL_dep}
-                        $<TARGET_FILE_DIR:${PROJECT_NAME}>)
-            endforeach()
-            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                COMMAND patchelf --set-rpath "\\$$ORIGIN/" $<TARGET_FILE_DIR:${PROJECT_NAME}>/libopenblas.so.0
-                COMMAND patchelf --set-rpath "\\$$ORIGIN/" $<TARGET_FILE_DIR:${PROJECT_NAME}>/libgfortran.so.5
-            )
+                    COMMAND patchelf --set-rpath "\\$$ORIGIN/" $<TARGET_FILE_DIR:${PROJECT_NAME}>/libopenblas.so.0
+                    COMMAND patchelf --set-rpath "\\$$ORIGIN/" $<TARGET_FILE_DIR:${PROJECT_NAME}>/libgfortran.so.5
+                )
+            endif()
         endif()
     endif()
     if(EXISTS "/etc/alpine-release")
