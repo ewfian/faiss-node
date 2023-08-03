@@ -148,7 +148,6 @@ describe('IndexFlatL2', () => {
       });
   
       it("returns search results on merged index", () => {
-        // The search should be performed on index2, not index1
         expect(index2.search([1, 0], 1)).toMatchObject({
           distances: [0],
           labels: [0],
