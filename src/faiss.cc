@@ -286,7 +286,7 @@ Napi::Value mergeFrom(const Napi::CallbackInfo &info)
 
   try
   {
-    index_->merge_from(*otherIndexInstance->index_);
+    index_->merge_from(*(otherIndexInstance->index_));
   }
   catch (const faiss::FaissException& ex)
   {
