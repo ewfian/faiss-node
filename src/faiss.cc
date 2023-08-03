@@ -63,6 +63,7 @@ public:
       InstanceMethod("add", &IndexFlatL2::add),
       InstanceMethod("search", &IndexFlatL2::search),
       InstanceMethod("write", &IndexFlatL2::write),
+      InstanceMethod("mergeFrom", &IndexFlatL2::mergeFrom),
       StaticMethod("read", &IndexFlatL2::read),
     });
     // clang-format on
@@ -257,6 +258,44 @@ private:
     return env.Undefined();
   }
 };
+
+Napi::Value mergeFrom(const Napi::CallbackInfo &info)
+{
+  Napi::Env env = info.Env();
+
+  if (info.Length() != 1)
+  {
+    Napi::Error::New(env, "Expected 1 argument, but got " + std::to_string(info.Length()) + ".")
+        .ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+  if (!info[0].IsObject())
+  {
+    Napi::TypeError::New(env, "Invalid argument type, must be an object.").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
+  Napi::Object otherIndex = info[0].As<Napi::Object>();
+  IndexFlatL2 *otherIndexInstance = Napi::ObjectWrap<IndexFlatL2>::Unwrap(otherIndex);
+
+  if (!otherIndexInstance)
+  {
+    Napi::Error::New(env, "Invalid argument type, must be an instance of IndexFlatL2.").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
+  try
+  {
+    index_->merge_from(*otherIndexInstance->index_);
+  }
+  catch (const faiss::FaissException& ex)
+  {
+    Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
+  return env.Undefined();
+}
 
 Napi::Object Init(Napi::Env env, Napi::Object exports)
 {
