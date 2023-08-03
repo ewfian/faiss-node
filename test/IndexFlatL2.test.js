@@ -133,4 +133,34 @@ describe('IndexFlatL2', () => {
             expect(index.search([1, 1], 4)).toMatchObject({ distances: [0, 1, 1, 4], labels: [3, 0, 1, 2] });
         });
     });
+    describe("#merge", () => {
+      const index1 = new IndexFlatL2(2);
+      beforeAll(() => {
+        index1.add([1, 0]);
+        index1.add([1, 2]);
+        index1.add([1, 3]);
+        index1.add([1, 1]);
+      });
+  
+      const index2 = new IndexFlatL2(2);
+      beforeAll(() => {
+        index2.mergeFrom(index1);
+      });
+  
+      it("returns search results on merged index", () => {
+        // The search should be performed on index2, not index1
+        expect(index2.search([1, 0], 1)).toMatchObject({
+          distances: [0],
+          labels: [0],
+        });
+        expect(index2.search([1, 0], 4)).toMatchObject({
+          distances: [0, 1, 4, 9],
+          labels: [0, 3, 1, 2],
+        });
+        expect(index2.search([1, 1], 4)).toMatchObject({
+          distances: [0, 1, 1, 4],
+          labels: [3, 0, 1, 2],
+        });
+      });
+    });
 });
