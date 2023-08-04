@@ -1,12 +1,11 @@
-FROM public.ecr.aws/lambda/nodejs:18
-COPY package*.json ./
-RUN npm ci --ignore-scripts
-
-RUN yum -y install wget tar gzip gcc gcc-c++ make lapack-devel
+FROM node:18-buster
+WORKDIR /app
+RUN apt update && apt install -y cmake libopenblas-dev patchelf
 RUN wget -q https://github.com/Kitware/CMake/releases/download/v3.27.0/cmake-3.27.0-linux-x86_64.sh && \
     sh cmake-3.27.0-linux-x86_64.sh --skip-license --exclude-subdir --prefix=/usr/local
-
+COPY package*.json ./
+RUN npm ci --ignore-scripts
 COPY . .
 
-ENTRYPOINT ["tail"]
-CMD ["-f","/dev/null"]
+ENTRYPOINT ["npm"]
+CMD ["run", "build:test"]

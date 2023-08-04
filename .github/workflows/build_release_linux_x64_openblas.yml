@@ -25,7 +25,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       - name: Prepare Image
-        run: docker buildx build --platform linux/amd64 -o type=docker -f Dockerfile.buildlinux -t faiss-build-linux .
+        run: docker buildx build --platform linux/amd64 -o type=docker -f Dockerfile.buildlinuxamd64 -t faiss-build-linux .
       - name: Build & test
         run: docker run --rm --platform linux/amd64 faiss-build-linux
       - name: Build Release
