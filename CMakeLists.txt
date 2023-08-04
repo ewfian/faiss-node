@@ -115,7 +115,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
                     libgfortran.so.5
                     libquadmath.so.0)
                 foreach(dep ${DEPENDANCES})
-                    file(TO_CMAKE_PATH "/lib/x86_64-linux-gnu/${dep}" MUSL_dep)
+                    file(TO_CMAKE_PATH "/usr/lib/x86_64-linux-gnu/${dep}" MUSL_dep)
                     message("Copy DEPENDANCES: " ${MUSL_dep})
                     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
                         COMMAND ${CMAKE_COMMAND} -E copy_if_different
