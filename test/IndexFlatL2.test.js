@@ -133,6 +133,7 @@ describe('IndexFlatL2', () => {
             expect(index.search([1, 1], 4)).toMatchObject({ distances: [0, 1, 1, 4], labels: [3, 0, 1, 2] });
         });
     });
+
     describe("#merge", () => {
       const index1 = new IndexFlatL2(2);
       beforeAll(() => {
@@ -146,7 +147,27 @@ describe('IndexFlatL2', () => {
       beforeAll(() => {
         index2.mergeFrom(index1);
       });
-  
+
+      it("throws an error if the number of arguments is not 1", () => {
+        expect(() => { index2.mergeFrom() }).toThrow('Expected 1 argument, but got 0.');
+        expect(() => { index2.mergeFrom(index1, 2) }).toThrow('Expected 1 argument, but got 2.');
+      });
+
+      it("throws an error if argument is not an object", () => {
+        expect(() => { index2.mergeFrom(1) }).toThrow('Invalid argument type, must be an object.');
+        expect(() => { index2.mergeFrom("string") }).toThrow('Invalid argument type, must be an object.');
+      });
+
+      it("throws an error if argument is not an instance of IndexFlatL2", () => {
+        expect(() => { index2.mergeFrom({}) }).toThrow('Invalid argument');
+        expect(() => { index2.mergeFrom({"foo": "bar"}) }).toThrow('Invalid argument');
+      });
+
+      it("throws an error if merging index has different dimensions", () => {
+        const index3 = new IndexFlatL2(3);
+        expect(() => { index2.mergeFrom(index3) }).toThrow('The merging index must have the same dimension.');
+      });
+
       it("returns search results on merged index", () => {
         expect(index2.search([1, 0], 1)).toMatchObject({
           distances: [0],

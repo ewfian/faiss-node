@@ -55,4 +55,9 @@ export class IndexFlatL2 {
      * @return {IndexFlatL2} The index read.
      */
     static read(fname: string): IndexFlatL2;
+    /**
+     * Merge the current index with another IndexFlatL2 instance.
+     * @param {IndexFlatL2} otherIndex The other IndexFlatL2 instance to merge from.
+     */
+    mergeFrom(otherIndex: IndexFlatL2): void;
 }

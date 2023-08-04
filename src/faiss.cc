@@ -257,6 +257,7 @@ private:
 
     return env.Undefined();
   }
+
   Napi::Value mergeFrom(const Napi::CallbackInfo &info)
   {
     Napi::Env env = info.Env();
@@ -276,9 +277,9 @@ private:
     Napi::Object otherIndex = info[0].As<Napi::Object>();
     IndexFlatL2 *otherIndexInstance = Napi::ObjectWrap<IndexFlatL2>::Unwrap(otherIndex);
 
-    if (!otherIndexInstance)
+    if (otherIndexInstance->index_->d != index_->d)
     {
-      Napi::Error::New(env, "Invalid argument type, must be an instance of IndexFlatL2.").ThrowAsJavaScriptException();
+      Napi::Error::New(env, "The merging index must have the same dimension.").ThrowAsJavaScriptException();
       return env.Undefined();
     }
 
