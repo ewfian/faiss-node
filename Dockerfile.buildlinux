@@ -1,6 +1,8 @@
 FROM node:18-buster
 WORKDIR /app
 RUN apt update && apt install -y cmake libopenblas-dev patchelf
+RUN wget -q https://github.com/Kitware/CMake/releases/download/v3.27.0/cmake-3.27.0-linux-aarch64.sh && \
+    sh cmake-3.27.0-linux-aarch64.sh --skip-license --exclude-subdir --prefix=/usr/local
 COPY package*.json ./
 RUN npm ci --ignore-scripts
 COPY . .
