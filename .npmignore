@@ -1,4 +1,5 @@
 .npmignore
+.dockerignore
 .gitignore
 .gitmodules
 .DS_Store
@@ -12,5 +13,6 @@ build/
 docs/
 package-lock.json
 *.index
+*.tgz
 test-import/
-Dockerfile.debug
+Dockerfile.*
