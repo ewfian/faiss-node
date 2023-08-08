@@ -1,4 +1,4 @@
-const { IndexFlatL2 } = require('faiss-node');
+const { IndexFlatL2 } = require('../');
 
 const dimension = 2;
 const index = new IndexFlatL2(dimension);
