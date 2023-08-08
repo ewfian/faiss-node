@@ -2,9 +2,9 @@ name: Build Pre-build Packages for Linux
 
 on:
   workflow_dispatch:
-  push:
-    tags:
-      - "*"
+  # push:
+  #   tags:
+  #     - "*"
 
 env:
   MKLROOT: "/opt/intel/mkl"
