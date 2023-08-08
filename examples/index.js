@@ -26,3 +26,7 @@ console.log(index_loaded.ntotal());
 const results1 = index_loaded.search([1, 1], 4);
 console.log(results1.labels);
 console.log(results1.distances);
+
+const newIndex = new IndexFlatL2(dimension);
+newIndex.mergeFrom(index);
+console.log(newIndex.ntotal());
