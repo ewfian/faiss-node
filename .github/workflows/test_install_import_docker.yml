@@ -62,4 +62,4 @@ jobs:
       run: docker buildx build --platform ${{ matrix.platform.arch }} -o type=docker -t test-import --build-arg BASE_IMAGE=node:${{ matrix.node }}${{ matrix.platform.distro }} .
     - name: Run test
       working-directory: ./test-import
-      run: docker run test-import
+      run: docker run --platform ${{ matrix.platform.arch }} test-import
