@@ -18,6 +18,10 @@ jobs:
             arch: 'linux/amd64'
           },
           {
+            distro: '',
+            arch: 'linux/arm64'
+          },
+          {
             distro: '-buster',
             arch: 'linux/amd64'
           },
