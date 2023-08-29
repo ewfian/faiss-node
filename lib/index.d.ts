@@ -60,4 +60,10 @@ export class IndexFlatL2 {
      * @param {IndexFlatL2} otherIndex The other IndexFlatL2 instance to merge from.
      */
     mergeFrom(otherIndex: IndexFlatL2): void;
+    /**
+     * Remove IDs from the index.
+     * @param {string} ids IDs to read.
+     * @return {IndexFlatL2} number of IDs removed.
+     */
+    removeIds(ids: number[]): number
 }

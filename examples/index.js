@@ -30,3 +30,9 @@ console.log(results1.distances);
 const newIndex = new IndexFlatL2(dimension);
 newIndex.mergeFrom(index);
 console.log(newIndex.ntotal());
+
+console.log(newIndex.search([1, 2], 1));
+const c = newIndex.removeIds([1]);
+console.log(c);
+console.log(newIndex.ntotal());
+console.log(newIndex.search([1, 2], 1));
