@@ -217,8 +217,20 @@ describe('IndexFlatL2', () => {
 
         it("correctly removed", () => {
             expect(index.search([1, 1], 1)).toMatchObject({ distances: [0], labels: [1] });
-            index.removeIds([0]);
+            expect(index.removeIds([0])).toBe(1);
             expect(index.search([1, 1], 1)).toMatchObject({ distances: [0], labels: [0] });
+        });
+
+        it("correctly removed multiple elements", () => {
+            expect(index.search([1, 3], 1)).toMatchObject({ distances: [0], labels: [3] });
+            expect(index.removeIds([0, 1])).toBe(2);
+            expect(index.search([1, 3], 1)).toMatchObject({ distances: [0], labels: [1] });
+        });
+
+        it("correctly removed partal elements", () => {
+            expect(index.search([1, 3], 1)).toMatchObject({ distances: [0], labels: [3] });
+            expect(index.removeIds([0, 1, 2, 4, 5])).toBe(3);
+            expect(index.search([1, 3], 1)).toMatchObject({ distances: [0], labels: [0] });
         });
     });
 });
