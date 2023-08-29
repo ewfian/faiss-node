@@ -185,12 +185,13 @@ describe('IndexFlatL2', () => {
     });
 
     describe("#removeIds", () => {
-        const index = new IndexFlatL2(2);
-        beforeAll(() => {
+        let index;
+        beforeEach(() => {
+            index = new IndexFlatL2(2);
             index.add([1, 0]);
+            index.add([1, 1]);
             index.add([1, 2]);
             index.add([1, 3]);
-            index.add([1, 1]);
         });
 
         it('throws an error if the count of given param is not 1', () => {
@@ -212,6 +213,12 @@ describe('IndexFlatL2', () => {
             expect(index.removeIds([0, 1])).toBe(2);
             expect(index.removeIds([2])).toBe(0);
             expect(index.removeIds([0, 1, 2])).toBe(1);
+        });
+
+        it("correctly removed", () => {
+            expect(index.search([1, 1], 1)).toMatchObject({ distances: [0], labels: [1] });
+            index.removeIds([0]);
+            expect(index.search([1, 1], 1)).toMatchObject({ distances: [0], labels: [0] });
         });
     });
 });

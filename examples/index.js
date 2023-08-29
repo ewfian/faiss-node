@@ -32,7 +32,7 @@ newIndex.mergeFrom(index);
 console.log(newIndex.ntotal());
 
 console.log(newIndex.search([1, 2], 1));
-const c = newIndex.removeIds([1]);
-console.log(c);
+const removedCount = newIndex.removeIds([1]);
+console.log(removedCount);
 console.log(newIndex.ntotal());
 console.log(newIndex.search([1, 2], 1));
