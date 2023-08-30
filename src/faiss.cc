@@ -5,6 +5,7 @@
 #include <faiss/IndexFlat.h>
 #include <faiss/index_io.h>
 #include <faiss/impl/FaissException.h>
+#include <faiss/impl/IDSelector.h>
 
 using namespace Napi;
 using idx_t = faiss::idx_t;
@@ -64,6 +65,7 @@ public:
       InstanceMethod("search", &IndexFlatL2::search),
       InstanceMethod("write", &IndexFlatL2::write),
       InstanceMethod("mergeFrom", &IndexFlatL2::mergeFrom),
+      InstanceMethod("removeIds", &IndexFlatL2::removeIds),
       StaticMethod("read", &IndexFlatL2::read),
     });
     // clang-format on
@@ -294,6 +296,44 @@ private:
     }
 
     return env.Undefined();
+  }
+
+  Napi::Value removeIds(const Napi::CallbackInfo &info)
+  {
+    Napi::Env env = info.Env();
+
+    if (info.Length() != 1)
+    {
+      Napi::Error::New(env, "Expected 1 argument, but got " + std::to_string(info.Length()) + ".")
+          .ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+    if (!info[0].IsArray())
+    {
+      Napi::TypeError::New(env, "Invalid the first argument type, must be an Array.").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+
+    Napi::Array arr = info[0].As<Napi::Array>();
+    size_t length = arr.Length();
+
+    idx_t *xb = new idx_t[length];
+    for (size_t i = 0; i < length; i++)
+    {
+      Napi::Value val = arr[i];
+      if (!val.IsNumber())
+      {
+        Napi::Error::New(env, "Expected a Number as array item. (at: " + std::to_string(i) + ")")
+            .ThrowAsJavaScriptException();
+        return env.Undefined();
+      }
+      xb[i] = val.As<Napi::Number>().Int64Value();
+    }
+
+    size_t num = index_->remove_ids(faiss::IDSelectorArray{length, xb});
+
+    delete[] xb;
+    return Napi::Number::New(info.Env(), num);
   }
 };
 

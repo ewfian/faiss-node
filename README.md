@@ -62,6 +62,13 @@ console.log(results1.distances); // [ 0, 1, 1, 4 ]
 const newIndex = new IndexFlatL2(dimension);
 newIndex.mergeFrom(index);
 console.log(newIndex.ntotal()); // 4
+
+// Remove items
+console.log(newIndex.search([1, 2], 1)); // { distances: [ 0 ], labels: [ 1 ] }
+const removedCount = newIndex.removeIds([0]);
+console.log(removedCount); // 1
+console.log(newIndex.ntotal()); // 3
+console.log(newIndex.search([1, 2], 1)); // { distances: [ 0 ], labels: [ 0 ] }
 ```
 
 ## License
