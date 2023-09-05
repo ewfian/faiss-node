@@ -1,0 +1,59 @@
+name: Build Pre-build Packages for AWS
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "*"
+  pull_request:
+    branches: [ "main" ]
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    environment: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: "true"
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: NPM Pack
+        run: npm pack
+      - name: Rename Package
+        run: mv faiss-node-*.tgz faiss-node.tgz
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Build & test
+        run: docker buildx build --platform linux/arm64 -o type=docker -f Dockerfile.buildawsarm64 -t faiss-build-aws .
+      - name: Get Version
+        id: version
+        run: |
+          VERSION=$(node -p -e "require('./package.json').version")
+          echo $VERSION
+          echo VERSION=$VERSION >> "$GITHUB_OUTPUT"
+      - name: Package
+        run: |
+          tempid=$(docker create --platform linux/arm64 faiss-build-aws)
+          docker cp $tempid:/var/task aws
+          docker rm -v $tempid
+          cd aws && ls -laht
+          mkdir nodejs && mv node_modules nodejs/node_modules && ln -s nodejs/node_modules node_modules
+          zip -r --symlinks faiss-node-v${{ steps.version.outputs.VERSION }}-aws-arm64.zip .
+      # - name: Upload to Release
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     draft: true
+      #     fail_on_unmatched_files: true
+      #     files: aws/*.zip
+      #     tag_name: "v${{ steps.version.outputs.VERSION }}"
