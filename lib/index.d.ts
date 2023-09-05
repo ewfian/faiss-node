@@ -102,6 +102,13 @@ export class Index {
      * @param {Index} otherIndex The other Index instance to merge from.
      */
     mergeFrom(otherIndex: Index): void;
+    /**
+     * Remove IDs from the index.
+     * @param {string} ids IDs to read.
+     * @return {IndexFlatL2} number of IDs removed.
+     */
+    removeIds(ids: number[]): number
+
 }
 
 /**
@@ -118,4 +125,6 @@ export class IndexFlatL2 extends Index {
  * @param {number} d The dimensionality of index.
  */
 export class IndexFlatIP extends Index {
+}
+    mergeFrom(otherIndex: IndexFlatL2): void;
 }

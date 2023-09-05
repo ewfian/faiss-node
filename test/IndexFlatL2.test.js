@@ -174,4 +174,54 @@ describe('IndexFlatL2', () => {
             });
         });
     });
+
+    describe("#removeIds", () => {
+        let index;
+        beforeEach(() => {
+            index = new IndexFlatL2(2);
+            index.add([1, 0]);
+            index.add([1, 1]);
+            index.add([1, 2]);
+            index.add([1, 3]);
+        });
+
+        it('throws an error if the count of given param is not 1', () => {
+            expect(() => { index.removeIds() }).toThrow('Expected 1 argument, but got 0.');
+            expect(() => { index.removeIds([], 1) }).toThrow('Expected 1 argument, but got 2.');
+        });
+
+        it('throws an error if given a non-Array object', () => {
+            expect(() => { index.removeIds('[1, 2, 3]') }).toThrow('Invalid the first argument type, must be an Array.');
+        });
+
+        it('throws an error if the element of given array is not a number', () => {
+            expect(() => { index.removeIds([1, '2']) }).toThrow('Expected a Number as array item. (at: 1)');
+        });
+
+        it("returns number of IDs removed", () => {
+            expect(index.removeIds([])).toBe(0);
+            expect(index.removeIds([0])).toBe(1);
+            expect(index.removeIds([0, 1])).toBe(2);
+            expect(index.removeIds([2])).toBe(0);
+            expect(index.removeIds([0, 1, 2])).toBe(1);
+        });
+
+        it("correctly removed", () => {
+            expect(index.search([1, 1], 1)).toMatchObject({ distances: [0], labels: [1] });
+            expect(index.removeIds([0])).toBe(1);
+            expect(index.search([1, 1], 1)).toMatchObject({ distances: [0], labels: [0] });
+        });
+
+        it("correctly removed multiple elements", () => {
+            expect(index.search([1, 3], 1)).toMatchObject({ distances: [0], labels: [3] });
+            expect(index.removeIds([0, 1])).toBe(2);
+            expect(index.search([1, 3], 1)).toMatchObject({ distances: [0], labels: [1] });
+        });
+
+        it("correctly removed partal elements", () => {
+            expect(index.search([1, 3], 1)).toMatchObject({ distances: [0], labels: [3] });
+            expect(index.removeIds([0, 1, 2, 4, 5])).toBe(3);
+            expect(index.search([1, 3], 1)).toMatchObject({ distances: [0], labels: [0] });
+        });
+    });
 });

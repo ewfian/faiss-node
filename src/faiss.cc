@@ -8,6 +8,7 @@
 #include <faiss/impl/io.h>
 #include <faiss/index_factory.h>
 #include <faiss/MetricType.h>
+#include <faiss/impl/IDSelector.h>
 
 using namespace Napi;
 using idx_t = faiss::idx_t;
@@ -406,6 +407,44 @@ public:
     return env.Undefined();
   }
 
+  Napi::Value removeIds(const Napi::CallbackInfo &info)
+  {
+    Napi::Env env = info.Env();
+
+    if (info.Length() != 1)
+    {
+      Napi::Error::New(env, "Expected 1 argument, but got " + std::to_string(info.Length()) + ".")
+          .ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+    if (!info[0].IsArray())
+    {
+      Napi::TypeError::New(env, "Invalid the first argument type, must be an Array.").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+
+    Napi::Array arr = info[0].As<Napi::Array>();
+    size_t length = arr.Length();
+
+    idx_t *xb = new idx_t[length];
+    for (size_t i = 0; i < length; i++)
+    {
+      Napi::Value val = arr[i];
+      if (!val.IsNumber())
+      {
+        Napi::Error::New(env, "Expected a Number as array item. (at: " + std::to_string(i) + ")")
+            .ThrowAsJavaScriptException();
+        return env.Undefined();
+      }
+      xb[i] = val.As<Napi::Number>().Int64Value();
+    }
+
+    size_t num = index_->remove_ids(faiss::IDSelectorArray{length, xb});
+
+    delete[] xb;
+    return Napi::Number::New(info.Env(), num);
+  }
+
   Napi::Value toBuffer(const Napi::CallbackInfo &info)
   {
     Napi::Env env = info.Env();
@@ -447,6 +486,7 @@ public:
       InstanceMethod("search", &Index::search),
       InstanceMethod("write", &Index::write),
       InstanceMethod("mergeFrom", &Index::mergeFrom),
+      InstanceMethod("removeIds", &Index::removeIds),
       InstanceMethod("toBuffer", &Index::toBuffer),
       StaticMethod("read", &Index::read),
       StaticMethod("fromBuffer", &Index::fromBuffer),
@@ -477,6 +517,7 @@ public:
       InstanceMethod("search", &IndexFlatL2::search),
       InstanceMethod("write", &IndexFlatL2::write),
       InstanceMethod("mergeFrom", &IndexFlatL2::mergeFrom),
+      InstanceMethod("removeIds", &IndexFlatL2::removeIds),
       InstanceMethod("toBuffer", &IndexFlatL2::toBuffer),
       StaticMethod("read", &IndexFlatL2::read),
       StaticMethod("fromBuffer", &IndexFlatL2::fromBuffer),
@@ -507,6 +548,7 @@ public:
       InstanceMethod("search", &IndexFlatIP::search),
       InstanceMethod("write", &IndexFlatIP::write),
       InstanceMethod("mergeFrom", &IndexFlatIP::mergeFrom),
+      InstanceMethod("removeIds", &IndexFlatIP::removeIds),
       InstanceMethod("toBuffer", &IndexFlatIP::toBuffer),
       StaticMethod("read", &IndexFlatIP::read),
       StaticMethod("fromBuffer", &IndexFlatIP::fromBuffer),
