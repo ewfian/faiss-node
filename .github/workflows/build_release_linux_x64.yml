@@ -9,10 +9,6 @@ on:
 env:
   MKLROOT: "/opt/intel/mkl"
 
-concurrency:
-  group: release
-  cancel-in-progress: false
-
 jobs:
   build:
     environment: release

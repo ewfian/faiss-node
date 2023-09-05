@@ -9,10 +9,6 @@ on:
 env:
   MKLROOT: 'C:\Program Files (x86)\Intel\oneAPI\mkl\latest'
 
-concurrency:
-  group: release
-  cancel-in-progress: false
-
 jobs:
   build:
     environment: release
