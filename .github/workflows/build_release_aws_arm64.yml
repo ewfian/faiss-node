@@ -1,12 +1,10 @@
-name: Build Pre-build Packages for AWS
+name: Build Pre-build Packages for AWS arm64
 
 on:
   workflow_dispatch:
   push:
     tags:
       - "*"
-  pull_request:
-    branches: [ "main" ]
 
 concurrency:
   group: release
@@ -50,10 +48,10 @@ jobs:
           cd aws && ls -laht
           mkdir nodejs && mv node_modules nodejs/node_modules && ln -s nodejs/node_modules node_modules
           zip -r --symlinks faiss-node-v${{ steps.version.outputs.VERSION }}-aws-arm64.zip .
-      # - name: Upload to Release
-      #   uses: softprops/action-gh-release@v1
-      #   with:
-      #     draft: true
-      #     fail_on_unmatched_files: true
-      #     files: aws/*.zip
-      #     tag_name: "v${{ steps.version.outputs.VERSION }}"
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          fail_on_unmatched_files: true
+          files: aws/*.zip
+          tag_name: "v${{ steps.version.outputs.VERSION }}"
