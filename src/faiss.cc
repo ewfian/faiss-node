@@ -13,6 +13,34 @@
 using namespace Napi;
 using idx_t = faiss::idx_t;
 
+template <typename K>
+inline Napi::Function GetInstanceData(Napi::Env env, K key)
+{
+  auto data = env.GetInstanceData<Napi::ObjectReference>();
+
+  if (!data)
+  {
+    return Napi::Function();
+  }
+
+  return data->Get(key).template As<Napi::Function>();
+}
+
+template <typename K>
+inline void AttachInstanceData(Napi::Env env, K key, Napi::Function constructor)
+{
+  auto data = env.GetInstanceData<Napi::ObjectReference>();
+
+  if (!data)
+  {
+    data = new Napi::ObjectReference();
+    *data = Napi::Reference<Napi::Object>::New(Napi::Object::New(env), 1);
+    env.SetInstanceData(data);
+  }
+
+  data->Set(key, constructor);
+}
+
 template <class T, typename Y>
 class IndexBase : public Napi::ObjectWrap<T>
 {
@@ -50,7 +78,7 @@ public:
       return env.Undefined();
     }
 
-    Napi::Object instance = constructor->New({});
+    Napi::Object instance = T::NewInstance(env, {});
     T *index = Napi::ObjectWrap<T>::Unwrap(instance);
 
     std::string fname;
@@ -91,7 +119,7 @@ public:
       return env.Undefined();
     }
 
-    Napi::Object instance = constructor->New({});
+    Napi::Object instance = T::NewInstance(env, {});
     T *index = Napi::ObjectWrap<T>::Unwrap(instance);
 
     auto buffer = Napi::Buffer<uint8_t>::Copy(env, info[0].As<Napi::Buffer<uint8_t>>().Data(), info[0].As<Napi::Buffer<uint8_t>>().Length());
@@ -137,7 +165,7 @@ public:
       metric = static_cast<faiss::MetricType>(info[0].As<Napi::Number>().Uint32Value());
     }
 
-    Napi::Object instance = constructor->New({});
+    Napi::Object instance = T::NewInstance(env, {});
     T *index = Napi::ObjectWrap<T>::Unwrap(instance);
 
     const uint32_t d = info[0].As<Napi::Number>().Uint32Value();
@@ -464,9 +492,15 @@ public:
     return Napi::Buffer<uint8_t>::Copy(env, writer->data.data(), writer->data.size());
   }
 
+  static Napi::Object NewInstance(Napi::Env env, const std::vector<napi_value> &args)
+  {
+    Napi::EscapableHandleScope scope(env);
+    Napi::Object obj = GetInstanceData(env, T::CLASS_NAME).New(args);
+    return scope.Escape(napi_value(obj)).ToObject();
+  }
+
 protected:
   std::unique_ptr<faiss::Index> index_;
-  inline static Napi::FunctionReference *constructor = new Napi::FunctionReference();
 };
 
 // faiss::Index is abstract so IndexFlatL2 is used as fallback
@@ -474,10 +508,15 @@ class Index : public IndexBase<Index, faiss::IndexFlatL2>
 {
 public:
   using IndexBase::IndexBase;
+
+  static constexpr const char *CLASS_NAME = "Index";
+
   static Napi::Object Init(Napi::Env env, Napi::Object exports)
   {
+    Napi::HandleScope scope(env);
+
     // clang-format off
-    Napi::Function func = DefineClass(env, "Index", {
+    auto func = DefineClass(env, CLASS_NAME, {
       InstanceMethod("ntotal", &Index::ntotal),
       InstanceMethod("getDimension", &Index::getDimension),
       InstanceMethod("isTrained", &Index::isTrained),
@@ -494,9 +533,8 @@ public:
     });
     // clang-format on
 
-    *constructor = Napi::Persistent(func);
-
-    exports.Set("Index", func);
+    AttachInstanceData(env, CLASS_NAME, func);
+    exports.Set(CLASS_NAME, func);
     return exports;
   }
 };
@@ -505,10 +543,15 @@ class IndexFlatL2 : public IndexBase<IndexFlatL2, faiss::IndexFlatL2>
 {
 public:
   using IndexBase::IndexBase;
+
+  static constexpr const char *CLASS_NAME = "IndexFlatL2";
+
   static Napi::Object Init(Napi::Env env, Napi::Object exports)
   {
+    Napi::HandleScope scope(env);
+
     // clang-format off
-    Napi::Function func = DefineClass(env, "IndexFlatL2", {
+    auto func = DefineClass(env, CLASS_NAME, {
       InstanceMethod("ntotal", &IndexFlatL2::ntotal),
       InstanceMethod("getDimension", &IndexFlatL2::getDimension),
       InstanceMethod("isTrained", &IndexFlatL2::isTrained),
@@ -525,9 +568,8 @@ public:
     });
     // clang-format on
 
-    *constructor = Napi::Persistent(func);
-
-    exports.Set("IndexFlatL2", func);
+    AttachInstanceData(env, CLASS_NAME, func);
+    exports.Set(CLASS_NAME, func);
     return exports;
   }
 };
@@ -536,10 +578,15 @@ class IndexFlatIP : public IndexBase<IndexFlatIP, faiss::IndexFlatIP>
 {
 public:
   using IndexBase::IndexBase;
+
+  static constexpr const char *CLASS_NAME = "IndexFlatIP";
+
   static Napi::Object Init(Napi::Env env, Napi::Object exports)
   {
+    Napi::HandleScope scope(env);
+
     // clang-format off
-    Napi::Function func = DefineClass(env, "IndexFlatIP", {
+    auto func = DefineClass(env, CLASS_NAME, {
       InstanceMethod("ntotal", &IndexFlatIP::ntotal),
       InstanceMethod("getDimension", &IndexFlatIP::getDimension),
       InstanceMethod("isTrained", &IndexFlatIP::isTrained),
@@ -556,9 +603,8 @@ public:
     });
     // clang-format on
 
-    *constructor = Napi::Persistent(func);
-
-    exports.Set("IndexFlatIP", func);
+    AttachInstanceData(env, CLASS_NAME, func);
+    exports.Set(CLASS_NAME, func);
     return exports;
   }
 };

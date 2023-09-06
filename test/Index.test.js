@@ -1,4 +1,4 @@
-const { Index, MetricType } = require('../lib');
+const { Index } = require('../lib');
 
 describe('Index', () => {
   describe('#fromFactory', () => {
