@@ -1,4 +1,4 @@
-const { Index } = require('../lib');
+const { Index, MetricType } = require('../lib');
 
 describe('Index', () => {
   describe('#fromFactory', () => {
@@ -11,7 +11,7 @@ describe('Index', () => {
     });
 
     it('Flat /w IP', () => {
-      const index = Index.fromFactory(2, 'Flat', 0 /* METRIC_INNER_PRODUCT */);
+      const index = Index.fromFactory(2, 'Flat', MetricType.METRIC_INNER_PRODUCT);
       const x = [1, 0, 0, 1];
       index.add(x);
 
