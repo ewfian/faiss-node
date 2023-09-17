@@ -13,14 +13,14 @@ export enum MetricType {
     METRIC_L1,                ///< L1 (aka cityblock)
     METRIC_Linf,              ///< infinity distance
     METRIC_Lp,                ///< L_p distance, p is given by a faiss::Index
-                              /// metric_arg
+    /// metric_arg
 
     /// some additional metrics defined in scipy.spatial.distance
     METRIC_Canberra = 20,
     METRIC_BrayCurtis,
     METRIC_JensenShannon,
     METRIC_Jaccard, ///< defined as: sum_i(min(a_i, b_i)) / sum_i(max(a_i, b_i))
-                    ///< where a_i, b_i > 0
+    ///< where a_i, b_i > 0
 }
 
 /**
@@ -125,6 +125,4 @@ export class IndexFlatL2 extends Index {
  * @param {number} d The dimensionality of index.
  */
 export class IndexFlatIP extends Index {
-}
-    mergeFrom(otherIndex: IndexFlatL2): void;
 }
