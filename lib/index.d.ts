@@ -24,7 +24,7 @@ export enum MetricType {
 }
 
 /**
- * Base Index.
+ * Index.
  * Index that stores the full vectors and performs exhaustive search.
  * @param {number} d The dimensionality of index.
  */
@@ -74,7 +74,6 @@ export class Index {
     write(fname: string): void;
     /** 
      * Write index to buffer.
-     * @param {string} fname File path to write.
      */
     toBuffer(): Buffer;
     /** 
