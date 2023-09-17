@@ -125,7 +125,7 @@ public:
     auto metric = faiss::MetricType::METRIC_L2;
     if (info[2].IsNumber())
     {
-      metric = static_cast<faiss::MetricType>(info[0].As<Napi::Number>().Uint32Value());
+      metric = static_cast<faiss::MetricType>(info[2].As<Napi::Number>().Uint32Value());
     }
 
     Napi::Object instance = T::constructor->New({});
