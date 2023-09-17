@@ -103,8 +103,8 @@ export class Index {
     mergeFrom(otherIndex: Index): void;
     /**
      * Remove IDs from the index.
-     * @param {string} ids IDs to read.
-     * @return {IndexFlatL2} number of IDs removed.
+     * @param {number[]} ids IDs to read.
+     * @return {number} number of IDs removed.
      */
     removeIds(ids: number[]): number
 
@@ -116,6 +116,31 @@ export class Index {
  * @param {number} d The dimensionality of index.
  */
 export class IndexFlatL2 extends Index {
+    /** 
+     * Read index from a file.
+     * @param {string} fname File path to read.
+     * @return {IndexFlatL2} The index read.
+     */
+    static read(fname: string): IndexFlatL2;
+    /** 
+     * Read index from buffer.
+     * @param {Buffer} src Buffer to create index from.
+     * @return {IndexFlatL2} The index read.
+     */
+    static fromBuffer(src: Buffer): IndexFlatL2;
+    /** 
+     * Construct an index from factory descriptor.
+     * @param {number} dims Buffer to create index from.
+     * @param {string} descriptor Factory descriptor.
+     * @param {MetricType} metric Metric type (defaults to L2).
+     * @return {IndexFlatL2} The index read.
+     */
+    static fromFactory(dims: number, descriptor: string, metric?: MetricType): IndexFlatL2;
+    /**
+     * Merge the current index with another Index instance.
+     * @param {IndexFlatL2} otherIndex The other Index instance to merge from.
+     */
+    mergeFrom(otherIndex: IndexFlatL2): void;
 }
 
 /**
@@ -124,4 +149,29 @@ export class IndexFlatL2 extends Index {
  * @param {number} d The dimensionality of index.
  */
 export class IndexFlatIP extends Index {
+    /** 
+     * Read index from a file.
+     * @param {string} fname File path to read.
+     * @return {IndexFlatIP} The index read.
+     */
+    static read(fname: string): IndexFlatIP;
+    /** 
+     * Read index from buffer.
+     * @param {Buffer} src Buffer to create index from.
+     * @return {IndexFlatIP} The index read.
+     */
+    static fromBuffer(src: Buffer): IndexFlatIP;
+    /** 
+     * Construct an index from factory descriptor.
+     * @param {number} dims Buffer to create index from.
+     * @param {string} descriptor Factory descriptor.
+     * @param {MetricType} metric Metric type (defaults to L2).
+     * @return {IndexFlatIP} The index read.
+     */
+    static fromFactory(dims: number, descriptor: string, metric?: MetricType): IndexFlatIP;
+    /**
+     * Merge the current index with another Index instance.
+     * @param {IndexFlatIP} otherIndex The other Index instance to merge from.
+     */
+    mergeFrom(otherIndex: IndexFlatIP): void;
 }
