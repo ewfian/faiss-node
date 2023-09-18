@@ -461,8 +461,6 @@ public:
 
   static Napi::Object Init(Napi::Env env, Napi::Object exports)
   {
-    Napi::HandleScope scope(env);
-
     // clang-format off
     auto func = DefineClass(env, CLASS_NAME, {
       InstanceMethod("ntotal", &Index::ntotal),
@@ -497,8 +495,6 @@ public:
 
   static Napi::Object Init(Napi::Env env, Napi::Object exports)
   {
-    Napi::HandleScope scope(env);
-
     // clang-format off
     auto func = DefineClass(env, CLASS_NAME, {
       InstanceMethod("ntotal", &IndexFlatL2::ntotal),
@@ -533,8 +529,6 @@ public:
 
   static Napi::Object Init(Napi::Env env, Napi::Object exports)
   {
-    Napi::HandleScope scope(env);
-
     // clang-format off
     auto func = DefineClass(env, CLASS_NAME, {
       InstanceMethod("ntotal", &IndexFlatIP::ntotal),
