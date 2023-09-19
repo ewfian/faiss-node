@@ -137,8 +137,8 @@ export class IndexFlatL2 extends Index {
      */
     static fromFactory(dims: number, descriptor: string, metric?: MetricType): IndexFlatL2;
     /**
-     * Merge the current index with another Index instance.
-     * @param {IndexFlatL2} otherIndex The other Index instance to merge from.
+     * Merge the current index with another IndexFlatL2 instance.
+     * @param {IndexFlatL2} otherIndex The other IndexFlatL2 instance to merge from.
      */
     mergeFrom(otherIndex: IndexFlatL2): void;
 }
@@ -170,8 +170,8 @@ export class IndexFlatIP extends Index {
      */
     static fromFactory(dims: number, descriptor: string, metric?: MetricType): IndexFlatIP;
     /**
-     * Merge the current index with another Index instance.
-     * @param {IndexFlatIP} otherIndex The other Index instance to merge from.
+     * Merge the current index with another IndexFlatIP instance.
+     * @param {IndexFlatIP} otherIndex The other IndexFlatIP instance to merge from.
      */
     mergeFrom(otherIndex: IndexFlatIP): void;
 }
