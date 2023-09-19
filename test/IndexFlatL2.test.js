@@ -1,12 +1,6 @@
 const { IndexFlatL2 } = require('../lib');
 
 describe('IndexFlatL2', () => {
-    describe('#constructor', () => {
-        it('throws an error if functional call constructor', () => {
-            expect(() => { IndexFlatL2(1) }).toThrow("Class constructors cannot be invoked without 'new'");
-        });
-    });
-
     describe('#read', () => {
         it('throws an error if file does not existed', () => {
             const fname = 'not_existed_file'

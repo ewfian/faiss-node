@@ -21,12 +21,6 @@ public:
   {
     Napi::Env env = info.Env();
 
-    if (!info.IsConstructCall())
-    {
-      Napi::Error::New(env, "Class constructors cannot be invoked without 'new'")
-          .ThrowAsJavaScriptException();
-      return;
-    }
     if (info.Length() > 0 && info[0].IsNumber())
     {
       auto n = info[0].As<Napi::Number>().Uint32Value();
