@@ -448,7 +448,7 @@ public:
 
 protected:
   std::unique_ptr<faiss::Index> index_;
-  inline static Napi::FunctionReference *constructor = new Napi::FunctionReference();
+  inline static Napi::FunctionReference *constructor;
 };
 
 // faiss::Index is abstract so IndexFlatL2 is used as fallback
@@ -479,6 +479,7 @@ public:
     });
     // clang-format on
 
+    constructor = new Napi::FunctionReference();
     *constructor = Napi::Persistent(func);
 
     exports.Set(CLASS_NAME, func);
@@ -513,6 +514,7 @@ public:
     });
     // clang-format on
 
+    constructor = new Napi::FunctionReference();
     *constructor = Napi::Persistent(func);
 
     exports.Set(CLASS_NAME, func);
@@ -547,6 +549,7 @@ public:
     });
     // clang-format on
 
+    constructor = new Napi::FunctionReference();
     *constructor = Napi::Persistent(func);
 
     exports.Set(CLASS_NAME, func);
