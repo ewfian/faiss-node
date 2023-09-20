@@ -504,7 +504,6 @@ public:
       InstanceMethod("toBuffer", &IndexFlatL2::toBuffer),
       StaticMethod("read", &IndexFlatL2::read),
       StaticMethod("fromBuffer", &IndexFlatL2::fromBuffer),
-      StaticMethod("fromFactory", &IndexFlatL2::fromFactory),
     });
     // clang-format on
 
@@ -539,7 +538,6 @@ public:
       InstanceMethod("toBuffer", &IndexFlatIP::toBuffer),
       StaticMethod("read", &IndexFlatIP::read),
       StaticMethod("fromBuffer", &IndexFlatIP::fromBuffer),
-      StaticMethod("fromFactory", &IndexFlatIP::fromFactory),
     });
     // clang-format on
 

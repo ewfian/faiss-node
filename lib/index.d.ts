@@ -128,14 +128,6 @@ export class IndexFlatL2 extends Index {
      * @return {IndexFlatL2} The index read.
      */
     static fromBuffer(src: Buffer): IndexFlatL2;
-    /** 
-     * Construct an index from factory descriptor.
-     * @param {number} dims Buffer to create index from.
-     * @param {string} descriptor Factory descriptor.
-     * @param {MetricType} metric Metric type (defaults to L2).
-     * @return {IndexFlatL2} The index read.
-     */
-    static fromFactory(dims: number, descriptor: string, metric?: MetricType): IndexFlatL2;
     /**
      * Merge the current index with another IndexFlatL2 instance.
      * @param {IndexFlatL2} otherIndex The other IndexFlatL2 instance to merge from.
@@ -161,14 +153,6 @@ export class IndexFlatIP extends Index {
      * @return {IndexFlatIP} The index read.
      */
     static fromBuffer(src: Buffer): IndexFlatIP;
-    /** 
-     * Construct an index from factory descriptor.
-     * @param {number} dims Buffer to create index from.
-     * @param {string} descriptor Factory descriptor.
-     * @param {MetricType} metric Metric type (defaults to L2).
-     * @return {IndexFlatIP} The index read.
-     */
-    static fromFactory(dims: number, descriptor: string, metric?: MetricType): IndexFlatIP;
     /**
      * Merge the current index with another IndexFlatIP instance.
      * @param {IndexFlatIP} otherIndex The other IndexFlatIP instance to merge from.
