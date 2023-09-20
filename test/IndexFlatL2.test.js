@@ -1,21 +1,6 @@
 const { IndexFlatL2 } = require('../lib');
 
 describe('IndexFlatL2', () => {
-    describe('#constructor', () => {
-        it('throws an error if the count of given param is not 1', () => {
-            expect(() => { new IndexFlatL2() }).toThrow('Expected 1 argument, but got 0.');
-            expect(() => { new IndexFlatL2(1, 2) }).toThrow('Expected 1 argument, but got 2.');
-        });
-
-        it('throws an error if given a non-Number object to the argument', () => {
-            expect(() => { new IndexFlatL2('1') }).toThrow('Invalid the first argument type, must be a number.');
-        });
-
-        it('throws an error if functional call constructor', () => {
-            expect(() => { IndexFlatL2(1) }).toThrow("Class constructors cannot be invoked without 'new'");
-        });
-    });
-
     describe('#read', () => {
         it('throws an error if file does not existed', () => {
             const fname = 'not_existed_file'

@@ -24,7 +24,7 @@ $ npm install faiss-node
 ## Usage
 
 ```javascript
-const { IndexFlatL2 } = require('faiss-node');
+const { IndexFlatL2, Index, IndexFlatIP, MetricType } = require('faiss-node');
 
 const dimension = 2;
 const index = new IndexFlatL2(dimension);
@@ -69,6 +69,21 @@ const removedCount = newIndex.removeIds([0]);
 console.log(removedCount); // 1
 console.log(newIndex.ntotal()); // 3
 console.log(newIndex.search([1, 2], 1)); // { distances: [ 0 ], labels: [ 0 ] }
+
+// IndexFlatIP
+const ipIndex = new IndexFlatIP(2);
+ipIndex.add([1, 0]);
+
+// Serialize an index
+const index_buf = newIndex.toBuffer();
+const deserializedIndex = Index.fromBuffer(index_buf);
+console.log(deserializedIndex.ntotal()); // 3
+
+// Factory index
+const hnswIndex = Index.fromFactory(2, 'HNSW,Flat', MetricType.METRIC_INNER_PRODUCT);
+const x = [1, 0, 0, 1];
+hnswIndex.train(x);
+hnswIndex.add(x);
 ```
 
 ## License
