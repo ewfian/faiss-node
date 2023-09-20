@@ -77,10 +77,11 @@ ipIndex.add([1, 0]);
 // Serialize an index
 const index_buf = newIndex.toBuffer();
 const deserializedIndex = Index.fromBuffer(index_buf);
+console.log(deserializedIndex.ntotal()); // 3
 
 // Factory index
 const hnswIndex = Index.fromFactory(2, 'HNSW,Flat', MetricType.METRIC_INNER_PRODUCT);
-const x = [1,0,0,1];
+const x = [1, 0, 0, 1];
 hnswIndex.train(x);
 hnswIndex.add(x);
 ```
