@@ -142,13 +142,25 @@ public:
 
   Napi::Value isTrained(const Napi::CallbackInfo &info)
   {
-    return Napi::Boolean::New(info.Env(), index_->is_trained);
+    Napi::Env env = info.Env();
+    if (!index_)
+    {
+      Napi::Error::New(env, "Index has been disposed").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+
+    return Napi::Boolean::New(env, index_->is_trained);
   }
 
   Napi::Value add(const Napi::CallbackInfo &info)
   {
     Napi::Env env = info.Env();
 
+    if (!index_)
+    {
+      Napi::Error::New(env, "Index has been disposed").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
     if (info.Length() != 1)
     {
       Napi::Error::New(env, "Expected 1 argument, but got " + std::to_string(info.Length()) + ".")
@@ -190,10 +202,45 @@ public:
     return env.Undefined();
   }
 
+  Napi::Value reset(const Napi::CallbackInfo &info)
+  {
+    Napi::Env env = info.Env();
+    if (!index_)
+    {
+      Napi::Error::New(env, "Index has been disposed").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+
+    index_->reset();
+
+    return env.Undefined();
+  }
+
+  Napi::Value dispose(const Napi::CallbackInfo &info)
+  {
+    Napi::Env env = info.Env();
+    if (!index_)
+    {
+      Napi::Error::New(env, "Index has been disposed").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+
+    auto idx = index_.release();
+    delete idx;
+    index_ = nullptr;
+
+    return env.Undefined();
+  }
+
   Napi::Value train(const Napi::CallbackInfo &info)
   {
     Napi::Env env = info.Env();
 
+    if (!index_)
+    {
+      Napi::Error::New(env, "Index has been disposed").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
     if (info.Length() != 1)
     {
       Napi::Error::New(env, "Expected 1 argument, but got " + std::to_string(info.Length()) + ".")
@@ -239,6 +286,11 @@ public:
   {
     Napi::Env env = info.Env();
 
+    if (!index_)
+    {
+      Napi::Error::New(env, "Index has been disposed").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
     if (info.Length() != 2)
     {
       Napi::Error::New(env, "Expected 2 arguments, but got " + std::to_string(info.Length()) + ".")
@@ -314,18 +366,36 @@ public:
 
   Napi::Value ntotal(const Napi::CallbackInfo &info)
   {
-    return Napi::Number::New(info.Env(), index_->ntotal);
+    Napi::Env env = info.Env();
+    if (!index_)
+    {
+      Napi::Error::New(env, "Index has been disposed").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+
+    return Napi::Number::New(env, index_->ntotal);
   }
 
   Napi::Value getDimension(const Napi::CallbackInfo &info)
   {
-    return Napi::Number::New(info.Env(), index_->d);
+    Napi::Env env = info.Env();
+    if (!index_)
+    {
+      Napi::Error::New(env, "Index has been disposed").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+    return Napi::Number::New(env, index_->d);
   }
 
   Napi::Value write(const Napi::CallbackInfo &info)
   {
     Napi::Env env = info.Env();
 
+    if (!index_)
+    {
+      Napi::Error::New(env, "Index has been disposed").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
     if (info.Length() != 1)
     {
       Napi::Error::New(env, "Expected 1 argument, but got " + std::to_string(info.Length()) + ".")
@@ -349,6 +419,11 @@ public:
   {
     Napi::Env env = info.Env();
 
+    if (!index_)
+    {
+      Napi::Error::New(env, "Index has been disposed").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
     if (info.Length() != 1)
     {
       Napi::Error::New(env, "Expected 1 argument, but got " + std::to_string(info.Length()) + ".")
@@ -387,6 +462,11 @@ public:
   {
     Napi::Env env = info.Env();
 
+    if (!index_)
+    {
+      Napi::Error::New(env, "Index has been disposed").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
     if (info.Length() != 1)
     {
       Napi::Error::New(env, "Expected 1 argument, but got " + std::to_string(info.Length()) + ".")
@@ -425,6 +505,11 @@ public:
   {
     Napi::Env env = info.Env();
 
+    if (!index_)
+    {
+      Napi::Error::New(env, "Index has been disposed").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
     if (info.Length() != 0)
     {
       Napi::Error::New(env, "Expected 0 arguments, but got " + std::to_string(info.Length()) + ".")
@@ -461,6 +546,8 @@ public:
       InstanceMethod("getDimension", &Index::getDimension),
       InstanceMethod("isTrained", &Index::isTrained),
       InstanceMethod("add", &Index::add),
+      InstanceMethod("reset", &Index::reset),
+      InstanceMethod("dispose", &Index::dispose),
       InstanceMethod("train", &Index::train),
       InstanceMethod("search", &Index::search),
       InstanceMethod("write", &Index::write),
@@ -496,6 +583,8 @@ public:
       InstanceMethod("getDimension", &IndexFlatL2::getDimension),
       InstanceMethod("isTrained", &IndexFlatL2::isTrained),
       InstanceMethod("add", &IndexFlatL2::add),
+      InstanceMethod("reset", &IndexFlatL2::reset),
+      InstanceMethod("dispose", &IndexFlatL2::dispose),
       InstanceMethod("train", &IndexFlatL2::train),
       InstanceMethod("search", &IndexFlatL2::search),
       InstanceMethod("write", &IndexFlatL2::write),
@@ -530,6 +619,8 @@ public:
       InstanceMethod("getDimension", &IndexFlatIP::getDimension),
       InstanceMethod("isTrained", &IndexFlatIP::isTrained),
       InstanceMethod("add", &IndexFlatIP::add),
+      InstanceMethod("reset", &IndexFlatIP::reset),
+      InstanceMethod("dispose", &IndexFlatIP::dispose),
       InstanceMethod("train", &IndexFlatIP::train),
       InstanceMethod("search", &IndexFlatIP::search),
       InstanceMethod("write", &IndexFlatIP::write),
