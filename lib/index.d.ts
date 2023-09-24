@@ -3,7 +3,7 @@ export interface SearchResult {
     /** The disances of the nearest negihbors found, size n*k. */
     distances: number[],
     /** The labels of the nearest neighbors found, size n*k. */
-    labels: number[]
+    labels: BigInt[]
 }
 
 // See faiss/MetricType.h
@@ -103,10 +103,10 @@ export class Index {
     mergeFrom(otherIndex: Index): void;
     /**
      * Remove IDs from the index.
-     * @param {number[]} ids IDs to read.
+     * @param {BigInt[]} ids IDs to read.
      * @return {number} number of IDs removed.
      */
-    removeIds(ids: number[]): number
+    removeIds(ids: BigInt[]): number
 
 }
 

@@ -301,7 +301,7 @@ public:
       idx_t label = I[i];
       float distance = D[i];
       arr_distances[i] = Napi::Number::New(env, distance);
-      arr_labels[i] = Napi::Number::New(env, label);
+      arr_labels[i] = Napi::BigInt::New(env, label);
     }
     delete[] I;
     delete[] D;
