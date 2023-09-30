@@ -10,7 +10,7 @@ COPY faiss-node.tgz ./
 
 RUN set -eux; \
   if [ $TARGETPLATFORM == "linux/arm/v7" ]; then \
-    apk add cmake build-base openblas-dev; \
+    apk add git cmake build-base openblas-dev; \
   fi
 
 RUN npm install ./faiss-node.tgz --verbose
