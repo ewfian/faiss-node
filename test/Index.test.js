@@ -43,4 +43,26 @@ describe('Index', () => {
       expect(index.ntotal()).toBe(newIndex.ntotal());
     });
   });
+
+  describe('#toIDMap2', () => {
+    it('new index preserves ID\'s', () => {
+      const index = Index.fromFactory(2, 'Flat').toIDMap2();
+      const x = [1, 0, 0, 1];
+      const labels = [100, 200];
+      index.addWithIds(x, labels);
+      const results = index.search([1, 0], 2);
+      expect(results.labels).toEqual(labels);
+    });
+
+    it('supports BigInt labels', () => {
+      const index = Index.fromFactory(2, 'Flat').toIDMap2();
+      const x = [1, 0, 0, 1];
+      const labels = [100n, 200n];
+      index.addWithIds(x, labels);
+      const results = index.search([1, 0], 2);
+      expect(results.labels).toEqual([100, 200]);
+      // TODO: Once search supports BigInt, use this test instead
+      // expect(results.labels).toEqual(labels);
+    });
+  });
 });

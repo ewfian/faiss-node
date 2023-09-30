@@ -84,6 +84,10 @@ const hnswIndex = Index.fromFactory(2, 'HNSW,Flat', MetricType.METRIC_INNER_PROD
 const x = [1, 0, 0, 1];
 hnswIndex.train(x);
 hnswIndex.add(x);
+
+// IDMap'd index
+const idIndex = new IndexFlat(2).toIDMap();
+idIndex.addWithIds([1, 0, 0, 1], [100n, 200n]);
 ```
 
 ## License
