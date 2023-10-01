@@ -9,11 +9,20 @@
 #include <faiss/index_factory.h>
 #include <faiss/MetricType.h>
 #include <faiss/impl/IDSelector.h>
+#include <faiss/IndexHNSW.h>
 
 using namespace Napi;
 using idx_t = faiss::idx_t;
 
-template <class T, typename Y>
+enum class IndexType
+{
+  Index,
+  IndexFlatL2,
+  IndexFlatIP,
+  IndexHNSW,
+};
+
+template <class T, typename Y, IndexType IT>
 class IndexBase : public Napi::ObjectWrap<T>
 {
 public:
@@ -21,7 +30,25 @@ public:
   {
     Napi::Env env = info.Env();
 
-    if (info.Length() > 0 && info[0].IsNumber())
+    if constexpr (IT == IndexType::IndexHNSW)
+    { // HNSW constructor
+      if (info.Length() > 0 && info[0].IsNumber())
+      {
+        auto n = info[0].As<Napi::Number>().Uint32Value();
+        auto m = 32;                                // faiss default
+        auto metric = faiss::MetricType::METRIC_L2; // faiss default
+        if (info.Length() > 1 && info[1].IsNumber())
+        {
+          m = info[1].As<Napi::Number>().Uint32Value();
+        }
+        if (info.Length() > 2 && info[2].IsNumber())
+        {
+          metric = static_cast<faiss::MetricType>(info[2].As<Napi::Number>().Uint32Value());
+        }
+        index_ = std::unique_ptr<faiss::IndexHNSW>(new faiss::IndexHNSW(n, m, metric));
+      }
+    }
+    else if (info.Length() > 0 && info[0].IsNumber())
     {
       auto n = info[0].As<Napi::Number>().Uint32Value();
       index_ = std::unique_ptr<Y>(new Y(n));
@@ -446,7 +473,7 @@ protected:
 };
 
 // faiss::Index is abstract so IndexFlatL2 is used as fallback
-class Index : public IndexBase<Index, faiss::IndexFlatL2>
+class Index : public IndexBase<Index, faiss::IndexFlatL2, IndexType::Index>
 {
 public:
   using IndexBase::IndexBase;
@@ -481,7 +508,7 @@ public:
   }
 };
 
-class IndexFlatL2 : public IndexBase<IndexFlatL2, faiss::IndexFlatL2>
+class IndexFlatL2 : public IndexBase<IndexFlatL2, faiss::IndexFlatL2, IndexType::IndexFlatL2>
 {
 public:
   using IndexBase::IndexBase;
@@ -515,7 +542,7 @@ public:
   }
 };
 
-class IndexFlatIP : public IndexBase<IndexFlatIP, faiss::IndexFlatIP>
+class IndexFlatIP : public IndexBase<IndexFlatIP, faiss::IndexFlatIP, IndexType::IndexFlatIP>
 {
 public:
   using IndexBase::IndexBase;
@@ -549,11 +576,104 @@ public:
   }
 };
 
+class IndexHNSW : public IndexBase<IndexHNSW, faiss::IndexHNSW, IndexType::IndexHNSW>
+{
+public:
+  using IndexBase::IndexBase;
+
+  static constexpr const char *CLASS_NAME = "IndexHNSW";
+
+  Napi::Value getEfConstruction(const Napi::CallbackInfo &info)
+  {
+    auto index = dynamic_cast<faiss::IndexHNSW *>(index_.get());
+    return Napi::Number::New(info.Env(), index->hnsw.efConstruction);
+  }
+
+  Napi::Value setEfConstruction(const Napi::CallbackInfo &info)
+  {
+    Napi::Env env = info.Env();
+
+    if (info.Length() != 1)
+    {
+      Napi::Error::New(env, "Expected 1 argument, but got " + std::to_string(info.Length()) + ".")
+          .ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+    if (!info[0].IsNumber())
+    {
+      Napi::TypeError::New(env, "Invalid the first argument type, must be a Number.").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+
+    auto index = dynamic_cast<faiss::IndexHNSW *>(index_.get());
+    index->hnsw.efConstruction = info[0].As<Napi::Number>().Int32Value();
+    return env.Undefined();
+  }
+
+  Napi::Value getEfSearch(const Napi::CallbackInfo &info)
+  {
+    auto index = dynamic_cast<faiss::IndexHNSW *>(index_.get());
+    return Napi::Number::New(info.Env(), index->hnsw.efSearch);
+  }
+
+  Napi::Value setEfSearch(const Napi::CallbackInfo &info)
+  {
+    Napi::Env env = info.Env();
+
+    if (info.Length() != 1)
+    {
+      Napi::Error::New(env, "Expected 1 argument, but got " + std::to_string(info.Length()) + ".")
+          .ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+    if (!info[0].IsNumber())
+    {
+      Napi::TypeError::New(env, "Invalid the first argument type, must be a Number.").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+
+    auto index = dynamic_cast<faiss::IndexHNSW *>(index_.get());
+    index->hnsw.efSearch = info[0].As<Napi::Number>().Int32Value();
+    return env.Undefined();
+  }
+
+  static Napi::Object Init(Napi::Env env, Napi::Object exports)
+  {
+    // clang-format off
+    auto func = DefineClass(env, CLASS_NAME, {
+      InstanceMethod("getEfConstruction", &IndexHNSW::getEfConstruction),
+      InstanceMethod("setEfConstruction", &IndexHNSW::setEfConstruction),
+      InstanceMethod("getEfSearch", &IndexHNSW::getEfSearch),
+      InstanceMethod("setEfSearch", &IndexHNSW::setEfSearch),
+      InstanceMethod("ntotal", &IndexHNSW::ntotal),
+      InstanceMethod("getDimension", &IndexHNSW::getDimension),
+      InstanceMethod("isTrained", &IndexHNSW::isTrained),
+      InstanceMethod("add", &IndexHNSW::add),
+      InstanceMethod("train", &IndexHNSW::train),
+      InstanceMethod("search", &IndexHNSW::search),
+      InstanceMethod("write", &IndexHNSW::write),
+      InstanceMethod("mergeFrom", &IndexHNSW::mergeFrom),
+      InstanceMethod("removeIds", &IndexHNSW::removeIds),
+      InstanceMethod("toBuffer", &IndexHNSW::toBuffer),
+      StaticMethod("read", &IndexHNSW::read),
+      StaticMethod("fromBuffer", &IndexHNSW::fromBuffer),
+    });
+    // clang-format on
+
+    constructor = new Napi::FunctionReference();
+    *constructor = Napi::Persistent(func);
+
+    exports.Set(CLASS_NAME, func);
+    return exports;
+  }
+};
+
 Napi::Object Init(Napi::Env env, Napi::Object exports)
 {
   Index::Init(env, exports);
   IndexFlatL2::Init(env, exports);
   IndexFlatIP::Init(env, exports);
+  IndexHNSW::Init(env, exports);
 
   return exports;
 }
