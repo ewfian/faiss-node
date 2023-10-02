@@ -1,7 +1,4 @@
 FROM ubuntu:22.04
-ARG TARGETPLATFORM
-ARG BUILDPLATFORM
-RUN echo "Running on $BUILDPLATFORM, building for $TARGETPLATFORM";
 
 WORKDIR /app
 COPY package.json ./
