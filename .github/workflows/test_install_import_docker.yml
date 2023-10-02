@@ -1,10 +1,10 @@
 name: Test Install & Import on Docker
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    tags:
+      - "*"
 
 jobs:
   test:
@@ -32,11 +32,7 @@ jobs:
           {
             distro: '-alpine',
             arch: 'linux/arm64'
-          },
-          # {
-          #   distro: '-alpine',
-          #   arch: 'linux/arm/v7'
-          # }
+          }
         ]
     runs-on: ubuntu-latest
     steps:
