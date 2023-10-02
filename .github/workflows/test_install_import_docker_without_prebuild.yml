@@ -1,0 +1,29 @@
+name: Test Install & Import without Pre-build Binary
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Node.js 18
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+    - name: Bump version to simulate a non-existed pre-build
+      run: npm version prerelease --preid=test --no-commit-hooks --no-git-tag-version
+    - name: NPM Pack
+      run: npm pack
+    - name: Rename Package
+      run: mv faiss-node-*.tgz test-import/faiss-node.tgz
+    - name: Build docker on Ubuntu
+      working-directory: ./test-import
+      run: docker build -f Dockerfile.withoutprebuild -t test-import .
+    - name: Run test
+      working-directory: ./test-import
+      run: docker run test-import
