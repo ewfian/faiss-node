@@ -1,4 +1,5 @@
-FROM ubuntu:22.04
+ARG BASE_IMAGE=node:18-alpine
+FROM $BASE_IMAGE
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 RUN echo "Running on $BUILDPLATFORM, building for $TARGETPLATFORM";
@@ -7,14 +8,10 @@ WORKDIR /app
 COPY package.json ./
 COPY faiss-node.tgz ./
 
-RUN apt update && \
-    apt install -y ca-certificates curl gnupg && \
-    mkdir -p /etc/apt/keyrings && \
-    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
-    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list && \
-    curl -fsSL https://apt.kitware.com/keys/kitware-archive-latest.asc | gpg --dearmor -o /etc/apt/keyrings/kitware-archive-keyring.gpg && \
-    echo 'deb [signed-by=/etc/apt/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ jammy main' | tee /etc/apt/sources.list.d/kitware.list && \
-    apt update && apt install -y nodejs cmake git build-essential libopenblas-dev patchelf
+RUN set -eux; \
+  if [ $TARGETPLATFORM == "linux/arm/v7" ]; then \
+    apk add cmake build-base openblas-dev; \
+  fi
 
 RUN npm install ./faiss-node.tgz --foreground-scripts
 COPY . .
