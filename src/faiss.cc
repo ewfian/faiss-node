@@ -440,6 +440,30 @@ public:
     return Napi::Buffer<uint8_t>::Copy(env, writer->data.data(), writer->data.size());
   }
 
+  Napi::Value getMetricType(const Napi::CallbackInfo &info)
+  {
+    return Napi::Number::New(info.Env(), index_->metric_type);
+  }
+
+  Napi::Value getMetricArg(const Napi::CallbackInfo &info)
+  {
+    return Napi::Number::New(info.Env(), index_->metric_arg);
+  }
+
+  Napi::Value getCodeSize(const Napi::CallbackInfo &info)
+  {
+    auto index = dynamic_cast<faiss::IndexFlat *>(index_.get());
+    return Napi::Number::New(info.Env(), index->code_size);
+  }
+
+  Napi::Value getCodesUInt8(const Napi::CallbackInfo &info)
+  {
+    Napi::Env env = info.Env();
+
+    auto index = dynamic_cast<faiss::IndexFlat *>(index_.get());
+    return Napi::Buffer<uint8_t>::Copy(env, index->codes.data(), index->codes.size());
+  }
+
 protected:
   std::unique_ptr<faiss::Index> index_;
   inline static Napi::FunctionReference *constructor;
@@ -467,6 +491,8 @@ public:
       InstanceMethod("mergeFrom", &Index::mergeFrom),
       InstanceMethod("removeIds", &Index::removeIds),
       InstanceMethod("toBuffer", &Index::toBuffer),
+      InstanceMethod("getMetricType", &Index::getMetricType),
+      InstanceMethod("getMetricArg", &Index::getMetricArg),
       StaticMethod("read", &Index::read),
       StaticMethod("fromBuffer", &Index::fromBuffer),
       StaticMethod("fromFactory", &Index::fromFactory),
@@ -502,6 +528,10 @@ public:
       InstanceMethod("mergeFrom", &IndexFlatL2::mergeFrom),
       InstanceMethod("removeIds", &IndexFlatL2::removeIds),
       InstanceMethod("toBuffer", &IndexFlatL2::toBuffer),
+      InstanceMethod("getMetricType", &IndexFlatL2::getMetricType),
+      InstanceMethod("getMetricArg", &IndexFlatL2::getMetricArg),
+      InstanceMethod("getCodeSize", &IndexFlatL2::getCodeSize),
+      InstanceMethod("getCodesUInt8", &IndexFlatL2::getCodesUInt8),
       StaticMethod("read", &IndexFlatL2::read),
       StaticMethod("fromBuffer", &IndexFlatL2::fromBuffer),
     });
@@ -536,6 +566,10 @@ public:
       InstanceMethod("mergeFrom", &IndexFlatIP::mergeFrom),
       InstanceMethod("removeIds", &IndexFlatIP::removeIds),
       InstanceMethod("toBuffer", &IndexFlatIP::toBuffer),
+      InstanceMethod("getMetricType", &IndexFlatIP::getMetricType),
+      InstanceMethod("getMetricArg", &IndexFlatIP::getMetricArg),
+      InstanceMethod("getCodeSize", &IndexFlatIP::getCodeSize),
+      InstanceMethod("getCodesUInt8", &IndexFlatIP::getCodesUInt8),
       StaticMethod("read", &IndexFlatIP::read),
       StaticMethod("fromBuffer", &IndexFlatIP::fromBuffer),
     });

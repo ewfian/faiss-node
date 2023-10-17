@@ -45,6 +45,14 @@ export class Index {
      * @return {number} Whether training is required.
      */
     isTrained(): boolean;
+    /**
+     * @return {MetricType} The metric of the index.
+     */
+    get metricType(): MetricType;
+    /**
+     * @return {number} Argument of the metric type.
+     */
+    get metricArg(): number;
     /** 
      * Add n vectors of dimension d to the index.
      * Vectors are implicitly assigned labels ntotal .. ntotal + n - 1
@@ -111,11 +119,25 @@ export class Index {
 }
 
 /**
+ * IndexFlat Abstract Index.
+ */
+export abstract class IndexFlat extends Index {
+    /**
+     * Byte size of each encoded vector.
+     */
+    get codeSize(): number;
+    /**
+     * Encoded dataset, size ntotal * codeSize.
+     */
+    get codes(): Buffer;
+}
+
+/**
  * IndexFlatL2 Index.
  * IndexFlatL2 that stores the full vectors and performs `squared L2` search.
  * @param {number} d The dimensionality of index.
  */
-export class IndexFlatL2 extends Index {
+export class IndexFlatL2 extends IndexFlat {
     /** 
      * Read index from a file.
      * @param {string} fname File path to read.
@@ -140,7 +162,7 @@ export class IndexFlatL2 extends Index {
  * Index that stores the full vectors and performs `maximum inner product` search.
  * @param {number} d The dimensionality of index.
  */
-export class IndexFlatIP extends Index {
+export class IndexFlatIP extends IndexFlat {
     /** 
      * Read index from a file.
      * @param {string} fname File path to read.

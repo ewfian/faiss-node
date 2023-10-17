@@ -43,4 +43,17 @@ describe('Index', () => {
       expect(index.ntotal()).toBe(newIndex.ntotal());
     });
   });
+
+  describe('#metricType', () => {
+    it('metric adheres to default', () => {
+      const index = Index.fromFactory(2, 'Flat');
+      expect(index.metricType).toBe(MetricType.METRIC_L2);
+      expect(index.metricArg).toBe(0);
+    });
+
+    it('metric adheres to initialized value', () => {
+      const index = Index.fromFactory(2, 'Flat', MetricType.METRIC_INNER_PRODUCT);
+      expect(index.metricType).toBe(MetricType.METRIC_INNER_PRODUCT);
+    });
+  });
 });

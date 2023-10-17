@@ -218,4 +218,21 @@ describe('IndexFlatL2', () => {
             expect(index.search([1, 3], 1)).toMatchObject({ distances: [0], labels: [0] });
         });
     });
+
+    describe('#codes', () => {
+        it("returns codeSize", () => {
+            const index = new IndexFlatL2(2);
+            expect(index.codeSize).toBe(8);
+        });
+
+        it("returns codes", () => {
+            const index = new IndexFlatL2(2);
+            const arr = [1, 1, 255, 255];
+            index.add(arr.slice(0, 2));
+            index.add(arr.slice(2, 4));
+            expect(index.codes).toStrictEqual(Buffer.from(Float32Array.from(arr).buffer));
+            index.add([99, 99]);
+            expect(index.codes).toStrictEqual(Buffer.from(Float32Array.from(arr.concat([99, 99])).buffer));
+        });
+    });
 });
