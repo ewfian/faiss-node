@@ -24,7 +24,7 @@ $ npm install faiss-node
 ## Usage
 
 ```javascript
-const { IndexFlatL2, Index, IndexFlatIP, MetricType } = require('faiss-node');
+const { IndexFlatL2, Index, IndexFlatIP, IndexHNSW, MetricType } = require('faiss-node');
 
 const dimension = 2;
 const index = new IndexFlatL2(dimension);
@@ -80,7 +80,9 @@ const deserializedIndex = Index.fromBuffer(index_buf);
 console.log(deserializedIndex.ntotal()); // 3
 
 // Factory index
-const hnswIndex = Index.fromFactory(2, 'HNSW,Flat', MetricType.METRIC_INNER_PRODUCT);
+const hnswIndex = Index.fromFactory(2, 'HNSW32,Flat', MetricType.METRIC_INNER_PRODUCT);
+// same as:
+// const hnswIndex = new IndexHNSW(2, 32, MetricType.METRIC_INNER_PRODUCT)
 const x = [1, 0, 0, 1];
 hnswIndex.train(x);
 hnswIndex.add(x);

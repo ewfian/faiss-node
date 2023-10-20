@@ -159,3 +159,49 @@ export class IndexFlatIP extends Index {
      */
     mergeFrom(otherIndex: IndexFlatIP): void;
 }
+
+/**
+ * IndexHNSW Index.
+ * The Hierarchical Navigable Small World indexing method is based on a graph built on the indexed vectors.
+ * @param {number} d The dimensionality of index.
+ * @param {number} m The number of neighbors used in the graph (defaults to 32).
+ * @param {number} metric Metric type (defaults to L2).
+ */
+export class IndexHNSW extends Index {
+    IndexHNSW(d?: number, m?: number, metric?: MetricType);
+    /** 
+     * Read index from a file.
+     * @param {string} fname File path to read.
+     * @return {IndexHNSW} The index read.
+     */
+    static read(fname: string): IndexHNSW;
+    /** 
+     * Read index from buffer.
+     * @param {Buffer} src Buffer to create index from.
+     * @return {IndexHNSW} The index read.
+     */
+    static fromBuffer(src: Buffer): IndexHNSW;
+    /**
+     * Merge the current index with another IndexHNSW instance.
+     * @param {IndexHNSW} otherIndex The other IndexHNSW instance to merge from.
+     */
+    mergeFrom(otherIndex: IndexHNSW): void;
+    /**
+     * The depth of exploration at add time.
+     */
+    get efConstruction(): number;
+    /**
+     * The depth of exploration at add time.
+     * @param {number} value The value to set.
+     */
+    set efConstruction(value: number);
+    /**
+     * The depth of exploration of the search.
+     */
+    get efSearch(): number;
+    /**
+     * The depth of exploration of the search.
+     * @param {number} value The value to set.
+     */
+    set efSearch(value: number);
+}
