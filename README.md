@@ -86,6 +86,59 @@ hnswIndex.train(x);
 hnswIndex.add(x);
 ```
 
+## Setup for contibutors
+
+This section is only relevant for you, in case you'd like to contribute to this project:
+
+```sh
+# install JS/node dependencies
+npm i
+
+# in case you forked, deps/faiss submodule wouldn't by default; 
+# checkout the FAISS source submodule
+git submodule update --init --recursive
+
+# compile the binding code
+npm run build:debug
+
+# test
+npm run test
+```
+
+### Pitfall: M1/M2 OpenMP linking architecture mismatch 
+
+In case you see this warning:
+
+> ld: warning: ignoring file /usr/local/opt/libomp/lib/libomp.dylib, building for macOS-arm64 but attempting to link with file built for macOS-x86_64
+
+...or testing the library errors out with:
+
+`dlopen(faiss-node/build/Debug/faiss-node.node, 0x0001): symbol not found in flat namespace (___kmpc_barrier)``
+
+You're probably running on an machine with a M1/M2 chip and running into a multi-architecture linking issue.
+ `node-faiss` must be linked against `OpenMP`, but the binary architecute of the compiled library and the
+ architecture of `OpenMP` library must match. You'll run into this issue if one of the architectures differ:
+
+```zsh
+user@dev faiss-node % arch
+arm64
+user@dev % file /usr/local/opt/libomp/lib/libomp.dylib
+/usr/local/opt/libomp/lib/libomp.dylib: Mach-O 64-bit dynamically linked shared library x86_64
+user@dev % 
+```
+
+You might need to reinstall `Homebrew` for M1/M2 and install `libomp` again from a host terminal
+process that is running in `arm64` architecture or explicity request for `arm64` when installing OpenMP: 
+`arch -arm64 brew install libomp`.
+
+In case linking still ends up with the same error, try:
+```zsh
+export LDFLAGS="-L/opt/homebrew/opt/libomp/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/libomp/include"
+```
+
+Run `npm run build` again and make sure that `libomp.dylib` is picked from `/opt/homebrew` (arm64) folder.
+
 ## License
 
 MIT
