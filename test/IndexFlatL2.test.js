@@ -113,9 +113,9 @@ describe('IndexFlatL2', () => {
         });
 
         it('returns search results', () => {
-            expect(index.search([1, 0], 1)).toMatchObject({ distances: [0], labels: [0] });
-            expect(index.search([1, 0], 4)).toMatchObject({ distances: [0, 1, 4, 9], labels: [0, 3, 1, 2] });
-            expect(index.search([1, 1], 4)).toMatchObject({ distances: [0, 1, 1, 4], labels: [3, 0, 1, 2] });
+            expect(index.search([1, 0], 1)).toMatchObject({ distances: [0], labels: [0n] });
+            expect(index.search([1, 0], 4)).toMatchObject({ distances: [0, 1, 4, 9], labels: [0n, 3n, 1n, 2n] });
+            expect(index.search([1, 1], 4)).toMatchObject({ distances: [0, 1, 1, 4], labels: [3n, 0n, 1n, 2n] });
         });
     });
 
@@ -156,15 +156,15 @@ describe('IndexFlatL2', () => {
         it("returns search results on merged index", () => {
             expect(index2.search([1, 0], 1)).toMatchObject({
                 distances: [0],
-                labels: [0],
+                labels: [0n],
             });
             expect(index2.search([1, 0], 4)).toMatchObject({
                 distances: [0, 1, 4, 9],
-                labels: [0, 3, 1, 2],
+                labels: [0n, 3n, 1n, 2n],
             });
             expect(index2.search([1, 1], 4)).toMatchObject({
                 distances: [0, 1, 1, 4],
-                labels: [3, 0, 1, 2],
+                labels: [3n, 0n, 1n, 2n],
             });
         });
     });
@@ -201,21 +201,21 @@ describe('IndexFlatL2', () => {
         });
 
         it("correctly removed", () => {
-            expect(index.search([1, 1], 1)).toMatchObject({ distances: [0], labels: [1] });
+            expect(index.search([1, 1], 1)).toMatchObject({ distances: [0], labels: [1n] });
             expect(index.removeIds([0])).toBe(1);
-            expect(index.search([1, 1], 1)).toMatchObject({ distances: [0], labels: [0] });
+            expect(index.search([1, 1], 1)).toMatchObject({ distances: [0], labels: [0n] });
         });
 
         it("correctly removed multiple elements", () => {
-            expect(index.search([1, 3], 1)).toMatchObject({ distances: [0], labels: [3] });
+            expect(index.search([1, 3], 1)).toMatchObject({ distances: [0], labels: [3n] });
             expect(index.removeIds([0, 1])).toBe(2);
-            expect(index.search([1, 3], 1)).toMatchObject({ distances: [0], labels: [1] });
+            expect(index.search([1, 3], 1)).toMatchObject({ distances: [0], labels: [1n] });
         });
 
         it("correctly removed partal elements", () => {
-            expect(index.search([1, 3], 1)).toMatchObject({ distances: [0], labels: [3] });
+            expect(index.search([1, 3], 1)).toMatchObject({ distances: [0], labels: [3n] });
             expect(index.removeIds([0, 1, 2, 4, 5])).toBe(3);
-            expect(index.search([1, 3], 1)).toMatchObject({ distances: [0], labels: [0] });
+            expect(index.search([1, 3], 1)).toMatchObject({ distances: [0], labels: [0n] });
         });
     });
 });
