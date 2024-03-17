@@ -77,6 +77,10 @@ export class Index {
      */
     toBuffer(): Buffer;
     /** 
+     * Create an IDMap'd index from source index.
+     */
+    toIDMap(): Index;
+    /** 
      * Read index from a file.
      * @param {string} fname File path to read.
      * @return {Index} The index read.
